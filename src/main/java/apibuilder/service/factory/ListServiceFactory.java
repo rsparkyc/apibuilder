@@ -13,7 +13,7 @@ public class ListServiceFactory {
     private static final Map<Type, IListService<? extends BaseEntity>>
             registrationMap = new HashMap<>();
 
-    public static <T extends BaseEntity> IListService<T> getListService(final Type entityType) {
+    public static <T extends BaseEntity> IListService<T> getService(final Type entityType) {
         if (registrationMap.containsKey(entityType)) {
             //noinspection unchecked
             return (IListService<T>) registrationMap.get(entityType);
@@ -23,10 +23,10 @@ public class ListServiceFactory {
     }
 
     public static <T extends BaseEntity> void registerServices(final IListService<T>[] services) {
-        for (IListService ilistService : services) {
-            Type entityType = ((ParameterizedType) ilistService.getClass().getGenericInterfaces()[0])
+        for (IListService listService : services) {
+            Type entityType = ((ParameterizedType) listService.getClass().getGenericInterfaces()[0])
                     .getActualTypeArguments()[0];
-            registrationMap.put(entityType, ilistService);
+            registrationMap.put(entityType, listService);
         }
     }
 

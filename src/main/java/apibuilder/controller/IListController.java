@@ -22,7 +22,7 @@ public interface IListController<T extends BaseEntity> {
         Type entityType = ((ParameterizedType) getClass()
                 .getGenericInterfaces()[0]).getActualTypeArguments()[0];
 
-        IListService<T> listService = ListServiceFactory.getListService(entityType);
+        IListService<T> listService = ListServiceFactory.getService(entityType);
         if (listService != null) {
             return new ResponseEntity<>(listService.listAll(), HttpStatus.OK);
         }
