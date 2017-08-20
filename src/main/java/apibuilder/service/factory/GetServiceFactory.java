@@ -22,10 +22,10 @@ public class GetServiceFactory {
     }
 
     public static <T extends BaseEntity> void registerServices(final IGetService<T>[] services) {
-        for (IGetService getService : services) {
-            Type entityType = ((ParameterizedType) getService.getClass().getGenericInterfaces()[0])
+        for (IGetService<T> service : services) {
+            Type entityType = ((ParameterizedType) service.getClass().getGenericInterfaces()[0])
                     .getActualTypeArguments()[0];
-            registrationMap.put(entityType, getService);
+            registrationMap.put(entityType, service);
         }
     }
 }

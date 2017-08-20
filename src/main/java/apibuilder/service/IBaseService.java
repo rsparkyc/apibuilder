@@ -8,7 +8,13 @@ import apibuilder.repository.factory.RepositoryFactory;
 
 import org.springframework.data.repository.CrudRepository;
 
-interface BaseService<T extends BaseEntity> {
+interface IBaseService<T extends BaseEntity> {
+
+    // IDEA: have a static factory that has singleton ServiceFactories injected into a
+    // Map<ServiceType, ServiceFactory>.  Perhaps we can get the proper service factory from that by
+    // passing in the serviceType?
+
+
     default CrudRepository<T, Long> getRepository() {
         Type entityType = ((ParameterizedType) getClass()
                 .getGenericInterfaces()[0]).getActualTypeArguments()[0];

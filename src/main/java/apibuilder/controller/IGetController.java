@@ -5,9 +5,6 @@
 
 package apibuilder.controller;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import apibuilder.entity.BaseEntity;
 import apibuilder.service.IGetService;
 import apibuilder.service.factory.GetServiceFactory;
@@ -20,13 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-public interface IGetController<T extends BaseEntity> {
+public interface IGetController<T extends BaseEntity> extends IBaseController<T> {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody default HttpEntity<T> get(@PathVariable final Long id) {
-        Type entityType = ((ParameterizedType) getClass()
-                .getGenericInterfaces()[0]).getActualTypeArguments()[0];
 
-        IGetService<T> getService = GetServiceFactory.getService(entityType);
+        IGetService<T> getService = GetServiceFactory.getService(getEntityType());
         if (getService != null) {
             return new ResponseEntity<>(getService.getById(id), HttpStatus.OK);
         }

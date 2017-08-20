@@ -1,7 +1,5 @@
 package apibuilder.controller;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import apibuilder.entity.BaseEntity;
@@ -15,14 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-public interface IListController<T extends BaseEntity> {
+public interface IListController<T extends BaseEntity> extends IBaseController<T> {
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody default HttpEntity<Iterable<T>> list() {
-        Type entityType = ((ParameterizedType) getClass()
-                .getGenericInterfaces()[0]).getActualTypeArguments()[0];
-
-        IListService<T> listService = ListServiceFactory.getService(entityType);
+        IListService<T> listService = ListServiceFactory.getService(getEntityType());
         if (listService != null) {
             return new ResponseEntity<>(listService.listAll(), HttpStatus.OK);
         }
