@@ -9,7 +9,6 @@ import apibuilder.entity.BaseEntity;
 import apibuilder.service.IListService;
 
 public class ListServiceFactory {
-
     private static final Map<Type, IListService<? extends BaseEntity>>
             registrationMap = new HashMap<>();
 
@@ -19,7 +18,6 @@ public class ListServiceFactory {
             return (IListService<T>) registrationMap.get(entityType);
         }
         return null;
-
     }
 
     public static <T extends BaseEntity> void registerServices(final IListService<T>[] services) {
@@ -29,5 +27,4 @@ public class ListServiceFactory {
             registrationMap.put(entityType, service);
         }
     }
-
 }

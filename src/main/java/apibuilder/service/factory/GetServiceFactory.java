@@ -18,7 +18,6 @@ public class GetServiceFactory {
             return (IGetService<T>) registrationMap.get(entityType);
         }
         return null;
-
     }
 
     public static <T extends BaseEntity> void registerServices(final IGetService<T>[] services) {
