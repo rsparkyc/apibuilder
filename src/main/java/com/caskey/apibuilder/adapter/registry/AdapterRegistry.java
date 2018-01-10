@@ -7,23 +7,25 @@ import java.util.Map;
 
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.requestBody.CreateRequestBody;
+import com.caskey.apibuilder.requestBody.EntityDTO;
 
-public class AdapterRegistry<T extends BaseEntity, B extends CreateRequestBody> {
+public class AdapterRegistry {
 
-    private final Map<Type, BaseEntityAdapter<T, B>> registrationMap = new HashMap<>();
+    private final Map<Type, BaseEntityAdapter<BaseEntity, EntityDTO>> registrationMap = new HashMap<>();
 
-    public AdapterRegistry(final BaseEntityAdapter<T, B>[] adapters) {
-        for (BaseEntityAdapter<T, B> adapter : adapters) {
+    public AdapterRegistry(final BaseEntityAdapter<BaseEntity, EntityDTO>[] adapters) {
+        for (BaseEntityAdapter<BaseEntity, EntityDTO> adapter : adapters) {
             Type entityType = ((ParameterizedType) adapter.getClass().getGenericSuperclass())
                     .getActualTypeArguments()[0];
             registrationMap.put(entityType, adapter);
         }
     }
 
-    public BaseEntityAdapter<T, B> getAdapter(final Type entityType) {
+    public <T extends BaseEntity, D extends EntityDTO> BaseEntityAdapter<T, D> getAdapter(
+            final Type entityType) {
         if (registrationMap.containsKey(entityType)) {
-            return registrationMap.get(entityType);
+            //noinspection unchecked
+            return (BaseEntityAdapter<T, D>) registrationMap.get(entityType);
         }
         return null;
     }

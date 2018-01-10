@@ -3,16 +3,16 @@ package com.caskey.apibuilder.service;
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.requestBody.CreateRequestBody;
+import com.caskey.apibuilder.requestBody.EntityDTO;
 
-public interface CreateService<T extends BaseEntity, B extends CreateRequestBody> extends BaseService<T> {
+public interface CreateService<T extends BaseEntity, D extends EntityDTO> extends BaseService<T> {
 
-    AdapterRegistry<T, B> getAdapterRegistry();
+    AdapterRegistry getAdapterRegistry();
 
-    default T create(final B createRequestBody) {
-        BaseEntityAdapter<T, B> adapter = getAdapterRegistry().getAdapter(getEntityType());
+    default T create(final D entityDTO) {
+        BaseEntityAdapter<T, D> adapter = getAdapterRegistry().getAdapter(getEntityType());
         if (adapter != null) {
-            T entity = adapter.toEntity(createRequestBody);
+            T entity = adapter.toEntity(entityDTO);
             return getRepository().save(entity);
         }
 

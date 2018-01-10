@@ -1,4 +1,4 @@
 package com.caskey.apibuilder.requestBody;
 
-public abstract class CreateRequestBody {
+public abstract class EntityDTO {
 }

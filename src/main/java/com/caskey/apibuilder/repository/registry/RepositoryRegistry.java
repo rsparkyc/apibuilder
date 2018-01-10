@@ -40,11 +40,6 @@ public class RepositoryRegistry {
                     }
                 }
             }
-            /*
-            Type entityType = ((ParameterizedType) ((Class) r.getClass().getGenericInterfaces()[0])
-                    .getGenericInterfaces()[0]).getActualTypeArguments()[0];
-            repositoryByEntityTypeMap.put(entityType, Optional.of(r));
-            */
         }
     }
 

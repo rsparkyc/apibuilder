@@ -8,20 +8,20 @@ import java.util.Map;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.service.GetService;
 
-public class GetServiceRegistry<T extends BaseEntity> {
-    private final Map<Type, GetService<T>> registrationMap = new HashMap<>();
+public class GetServiceRegistry {
+    private final Map<Type, GetService<BaseEntity>> registrationMap = new HashMap<>();
 
-    public GetServiceRegistry(final GetService<T>[] services) {
-        for (GetService<T> service : services) {
+    public GetServiceRegistry(final GetService<BaseEntity>[] services) {
+        for (GetService<BaseEntity> service : services) {
             Type entityType = ((ParameterizedType) service.getClass().getGenericInterfaces()[0])
                     .getActualTypeArguments()[0];
             registrationMap.put(entityType, service);
         }
     }
 
-    public GetService<T> getService(final Type entityType) {
+    public <T extends BaseEntity> GetService<T> getService(final Type entityType) {
         if (registrationMap.containsKey(entityType)) {
-            return registrationMap.get(entityType);
+            return (GetService<T>) registrationMap.get(entityType);
         }
         return null;
     }

@@ -13,22 +13,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.caskey.apibuilder.adapter.BaseEntityAdapter;
+import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
 import com.caskey.apibuilder.entity.BaseEntity;
+import com.caskey.apibuilder.requestBody.EntityDTO;
 import com.caskey.apibuilder.service.GetService;
 import com.caskey.apibuilder.service.registry.GetServiceRegistry;
 
-public interface GetController<T extends BaseEntity> extends BaseController<T> {
+public interface GetController<T extends BaseEntity, D extends EntityDTO> extends BaseController<T> {
 
-    GetServiceRegistry<T> getGetServiceRegistry();
+    GetServiceRegistry getGetServiceRegistry();
+
+    AdapterRegistry getAdapterRegistry();
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ResponseBody default HttpEntity<T> get(@PathVariable final Long id) {
+    @ResponseBody default HttpEntity<D> get(@PathVariable final Long id) {
 
         GetService<T> getService = getGetServiceRegistry().getService(getEntityType());
         if (getService != null) {
-            return new ResponseEntity<>(getService.getById(id), HttpStatus.OK);
+            T byId = getService.getById(id);
+
+            BaseEntityAdapter<T, D> adapter =
+                    getAdapterRegistry().getAdapter(getEntityType());
+            D dto = adapter.toDTO(byId);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
         }
-        return new ResponseEntity<>((T) null, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>((D) null, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
 }
