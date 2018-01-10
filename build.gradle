@@ -17,10 +17,11 @@ ext {
     projectName = 'apibuilder'
 }
 
-group = 'com.apibuilder'
+group = 'com.caskey'
 version = '0.1.0-SNAPSHOT'
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -28,9 +29,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web:1.5.6.RELEASE")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa:1.5.6.RELEASE")
-    compile("org.springframework.boot:spring-boot-starter-security:1.5.6.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-security')
 
     testCompile("junit:junit")
 }
