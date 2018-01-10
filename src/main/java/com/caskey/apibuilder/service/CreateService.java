@@ -5,7 +5,7 @@ import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.CreateRequestBody;
 
-public interface ICreateService<T extends BaseEntity, B extends CreateRequestBody> extends IBaseService<T> {
+public interface CreateService<T extends BaseEntity, B extends CreateRequestBody> extends BaseService<T> {
 
     AdapterRegistry<T, B> getAdapterRegistry();
 

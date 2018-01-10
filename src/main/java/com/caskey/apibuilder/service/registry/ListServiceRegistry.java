@@ -6,20 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.service.IListService;
+import com.caskey.apibuilder.service.ListService;
 
 public class ListServiceRegistry<T extends BaseEntity> {
-    private final Map<Type, IListService<T>> registrationMap = new HashMap<>();
+    private final Map<Type, ListService<T>> registrationMap = new HashMap<>();
 
-    public ListServiceRegistry(final IListService<T>[] services) {
-        for (IListService<T> service : services) {
+    public ListServiceRegistry(final ListService<T>[] services) {
+        for (ListService<T> service : services) {
             Type entityType = ((ParameterizedType) service.getClass().getGenericInterfaces()[0])
                     .getActualTypeArguments()[0];
             registrationMap.put(entityType, service);
         }
     }
 
-    public IListService<T> getService(final Type entityType) {
+    public ListService<T> getService(final Type entityType) {
         if (registrationMap.containsKey(entityType)) {
             return registrationMap.get(entityType);
         }

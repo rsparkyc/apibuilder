@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.CreateRequestBody;
-import com.caskey.apibuilder.service.ICreateService;
+import com.caskey.apibuilder.service.CreateService;
 import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
 
-public interface ICreateController<T extends BaseEntity, B extends CreateRequestBody>
-        extends IBaseController<T> {
+public interface CreateController<T extends BaseEntity, B extends CreateRequestBody>
+        extends BaseController<T> {
 
     CreateServiceRegistry<T, B> getCreateServiceRegistry();
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody default HttpEntity<T> get(@RequestBody final B requestBody) {
 
-        ICreateService<T, B> getService = getCreateServiceRegistry().getService(getEntityType());
+        CreateService<T, B> getService = getCreateServiceRegistry().getService(getEntityType());
         if (getService != null) {
             return new ResponseEntity<>(getService.create(requestBody), HttpStatus.OK);
         }

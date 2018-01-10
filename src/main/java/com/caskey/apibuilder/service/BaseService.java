@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.repository.registry.RepositoryRegistry;
 
-interface IBaseService<T extends BaseEntity> {
+interface BaseService<T extends BaseEntity> {
 
     RepositoryRegistry getRepositoryRegistry();
 

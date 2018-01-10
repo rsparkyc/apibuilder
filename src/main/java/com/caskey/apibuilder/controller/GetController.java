@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.service.IGetService;
+import com.caskey.apibuilder.service.GetService;
 import com.caskey.apibuilder.service.registry.GetServiceRegistry;
 
-public interface IGetController<T extends BaseEntity> extends IBaseController<T> {
+public interface GetController<T extends BaseEntity> extends BaseController<T> {
 
     GetServiceRegistry<T> getGetServiceRegistry();
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody default HttpEntity<T> get(@PathVariable final Long id) {
 
-        IGetService<T> getService = getGetServiceRegistry().getService(getEntityType());
+        GetService<T> getService = getGetServiceRegistry().getService(getEntityType());
         if (getService != null) {
             return new ResponseEntity<>(getService.getById(id), HttpStatus.OK);
         }

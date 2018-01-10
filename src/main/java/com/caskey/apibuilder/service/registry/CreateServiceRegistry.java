@@ -7,20 +7,20 @@ import java.util.Map;
 
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.CreateRequestBody;
-import com.caskey.apibuilder.service.ICreateService;
+import com.caskey.apibuilder.service.CreateService;
 
 public class CreateServiceRegistry<T extends BaseEntity, B extends CreateRequestBody> {
-    private final Map<Type, ICreateService<T, B>> registrationMap = new HashMap<>();
+    private final Map<Type, CreateService<T, B>> registrationMap = new HashMap<>();
 
-    public CreateServiceRegistry(final ICreateService<T, B>[] services) {
-        for (ICreateService<T, B> service : services) {
+    public CreateServiceRegistry(final CreateService<T, B>[] services) {
+        for (CreateService<T, B> service : services) {
             Type entityType = ((ParameterizedType) service.getClass().getGenericInterfaces()[0])
                     .getActualTypeArguments()[0];
             registrationMap.put(entityType, service);
         }
     }
 
-    public ICreateService<T, B> getService(final Type entityType) {
+    public CreateService<T, B> getService(final Type entityType) {
         if (registrationMap.containsKey(entityType)) {
             return registrationMap.get(entityType);
         }
