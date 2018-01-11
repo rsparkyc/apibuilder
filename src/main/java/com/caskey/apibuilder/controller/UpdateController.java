@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.caskey.apibuilder.entity.BaseEntity;
@@ -20,11 +21,12 @@ public interface UpdateController<T extends BaseEntity, D extends BaseEntityDTO>
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody default HttpEntity<D> update(
             @PathVariable final Long id,
-            @RequestBody final D entityDTO) {
+            @RequestBody final D entityDTO,
+            @RequestParam final Long depth) {
         UpdateService<T, D> updateService =
                 getRegistryWrapper().getUpdateServiceRegistry().getService(getEntityType());
         try {
-            return new ResponseEntity<>(updateService.updateAndGetDTO(id, entityDTO), HttpStatus.OK);
+            return new ResponseEntity<>(updateService.updateAndGetDTO(id, entityDTO, depth), HttpStatus.OK);
         } catch (MissingEntityException e) {
             return new ResponseEntity<>((D) null, HttpStatus.NOT_FOUND);
         }

@@ -8,7 +8,7 @@ public interface GetService<T extends BaseEntity, D extends BaseEntityDTO> exten
         return getRepository().findOne(id);
     }
 
-    default D getDTOById(final Long id) {
-        return getAdapter().toDTO(getById(id));
+    default D getDTOById(final Long id, final Long depth) {
+        return getAdapter().toDTO(getById(id), depth);
     }
 }

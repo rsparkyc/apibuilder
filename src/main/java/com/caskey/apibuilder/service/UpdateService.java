@@ -22,9 +22,10 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         return entity;
     }
 
-    default D updateAndGetDTO(final Long id, final D entityDTO) throws MissingEntityException {
+    default D updateAndGetDTO(final Long id, final D entityDTO, final Long depth)
+            throws MissingEntityException {
         T entity = update(id, entityDTO);
-        return getAdapter().toDTO(entity);
+        return getAdapter().toDTO(entity, depth);
     }
 
     default T update(final T entity) throws MissingEntityException {

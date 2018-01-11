@@ -15,10 +15,10 @@ public abstract class NamedBaseEntityAdapter<T extends NamedBaseEntity, D extend
     protected abstract void mapFromDTOToEntityExceptName(final D dto, final T entity);
 
     @Override
-    public void mapFromEntityToDTO(final T entity, final D dto) {
-        mapFromEntityToDTOExceptName(entity, dto);
+    public void mapFromEntityToDTO(final T entity, final D dto, final Long depth) {
+        mapFromEntityToDTOExceptName(entity, dto, depth);
         dto.setName(entity.getName());
     }
 
-    protected abstract void mapFromEntityToDTOExceptName(final T entity, final D dto);
+    protected abstract void mapFromEntityToDTOExceptName(final T entity, final D dto, final Long depth);
 }

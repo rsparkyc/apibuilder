@@ -40,6 +40,10 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     public final D toDTO(final T entity) {
+        return toDTO(entity, 0L);
+    }
+
+    public final D toDTO(final T entity, final Long depth) {
         if (entity == null) {
             return null;
         }
@@ -47,17 +51,21 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         dto.setId(entity.getId());
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setModifiedDate(entity.getModifiedDate());
-        mapFromEntityToDTO(entity, dto);
+        mapFromEntityToDTO(entity, dto, depth);
         return dto;
     }
 
     public abstract void mapFromDtoToEntity(final D entityDTO, final T entity);
 
-    public abstract void mapFromEntityToDTO(final T entity, final D dto);
+    public abstract void mapFromEntityToDTO(final T entity, final D dto, final Long depth);
 
     public final List<D> toDTOs(final Iterable<T> entities) {
+        return toDTOs(entities, 0L);
+    }
+
+    public final List<D> toDTOs(final Iterable<T> entities, final Long depth) {
         List<D> result = new ArrayList<>();
-        entities.forEach(e -> result.add(toDTO(e)));
+        entities.forEach(e -> result.add(toDTO(e, depth)));
         return result;
     }
 }
