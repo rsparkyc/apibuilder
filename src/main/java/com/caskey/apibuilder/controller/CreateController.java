@@ -19,12 +19,9 @@ public interface CreateController<T extends BaseEntity, D extends BaseEntityDTO>
     CreateServiceRegistry getCreateServiceRegistry();
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    @ResponseBody default HttpEntity<T> get(@RequestBody final D entityDTO) {
+    @ResponseBody default HttpEntity<D> create(@RequestBody final D entityDTO) {
 
-        CreateService<T, D> getService = getCreateServiceRegistry().getService(getEntityType());
-        if (getService != null) {
-            return new ResponseEntity<>(getService.create(entityDTO), HttpStatus.OK);
-        }
-        return new ResponseEntity<>((T) null, HttpStatus.INTERNAL_SERVER_ERROR);
+        CreateService<T, D> createService = getCreateServiceRegistry().getService(getEntityType());
+        return new ResponseEntity<>(createService.createAndGetDTO(entityDTO), HttpStatus.CREATED);
     }
 }

@@ -6,24 +6,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.caskey.apibuilder.entity.BaseEntity;
+import com.caskey.apibuilder.exception.MissingServiceException;
+import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.GetService;
 
 public class GetServiceRegistry {
-    private final Map<Type, GetService<BaseEntity>> registrationMap = new HashMap<>();
+    private final Map<Type, GetService<BaseEntity, BaseEntityDTO>> registrationMap = new HashMap<>();
 
-    public GetServiceRegistry(final GetService<BaseEntity>[] services) {
-        for (GetService<BaseEntity> service : services) {
+    public GetServiceRegistry(final GetService<BaseEntity, BaseEntityDTO>[] services) {
+        for (GetService<BaseEntity, BaseEntityDTO> service : services) {
             Type entityType = ((ParameterizedType) service.getClass().getGenericInterfaces()[0])
                     .getActualTypeArguments()[0];
             registrationMap.put(entityType, service);
         }
     }
 
-    public <T extends BaseEntity> GetService<T> getService(final Type entityType) {
+    public <T extends BaseEntity, D extends BaseEntityDTO> GetService<T, D> getService(
+            final Type entityType) {
         if (registrationMap.containsKey(entityType)) {
-            return (GetService<T>) registrationMap.get(entityType);
+            //noinspection unchecked
+            return (GetService<T, D>) registrationMap.get(entityType);
         }
-        return null;
+        throw new MissingServiceException("The Get service for " + entityType + " was missing.");
     }
 
 }

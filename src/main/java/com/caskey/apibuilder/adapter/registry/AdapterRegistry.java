@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.entity.BaseEntity;
+import com.caskey.apibuilder.exception.MissingAdapterException;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 
 public class AdapterRegistry {
@@ -27,7 +28,9 @@ public class AdapterRegistry {
             //noinspection unchecked
             return (BaseEntityAdapter<T, D>) registrationMap.get(entityType);
         }
-        return null;
+
+        throw new MissingAdapterException(
+                "The create adapter for " + entityType.getTypeName() + " was missing.");
     }
 
 }

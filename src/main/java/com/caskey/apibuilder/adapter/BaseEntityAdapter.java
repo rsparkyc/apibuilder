@@ -13,15 +13,22 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     protected abstract D createNewDTO();
 
     public final T toEntity(final D entityDTO) {
+        if (entityDTO == null) {
+            return null;
+        }
         T entity = createNewEntity();
         entity.setId(entityDTO.getId());
-        entity.setCreatedDate(entityDTO.getCreatedDate());
-        entity.setModifiedDate(entityDTO.getModifiedDate());
+        // I don't want the ability to change these fields just because the DTO said so
+        // entity.setCreatedDate(entityDTO.getCreatedDate());
+        // entity.setModifiedDate(entityDTO.getModifiedDate());
         mapFromDtoToEntity(entityDTO, entity);
         return entity;
     }
 
     public final D toDTO(final T entity) {
+        if (entity == null) {
+            return null;
+        }
         D dto = createNewDTO();
         dto.setId(entity.getId());
         dto.setCreatedDate(entity.getCreatedDate());
@@ -30,9 +37,9 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         return dto;
     }
 
-    protected abstract void mapFromDtoToEntity(final D entityDTO, final T entity);
+    public abstract void mapFromDtoToEntity(final D entityDTO, final T entity);
 
-    protected abstract void mapFromEntityToDTO(final T entity, final D dto);
+    public abstract void mapFromEntityToDTO(final T entity, final D dto);
 
     public final List<D> toDTOs(final Iterable<T> entities) {
         List<D> result = new ArrayList<>();
