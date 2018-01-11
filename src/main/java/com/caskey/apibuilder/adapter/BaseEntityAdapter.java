@@ -32,9 +32,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         }
         T entity = createNewEntity();
         entity.setId(entityDTO.getId());
-        // I don't want the ability to change these fields just because the DTO said so
-        // entity.setCreatedDate(entityDTO.getCreatedDate());
-        // entity.setModifiedDate(entityDTO.getModifiedDate());
+        // I don't want the ability to change fields like dates or entityType just because the DTO said so
         mapFromDtoToEntity(entityDTO, entity);
         return entity;
     }
@@ -51,6 +49,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         dto.setId(entity.getId());
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setModifiedDate(entity.getModifiedDate());
+        dto.setEntityType(entity.getEntityType());
         mapFromEntityToDTO(entity, dto, depth);
         return dto;
     }
@@ -67,5 +66,16 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         List<D> result = new ArrayList<>();
         entities.forEach(e -> result.add(toDTO(e, depth)));
         return result;
+    }
+
+    protected long getNextDepth(final Long depth) {
+        if (depth != null && depth > 0) {
+            return depth - 1;
+        }
+        return 0L;
+    }
+
+    protected boolean shouldProcessDeeper(final Long depth) {
+        return (depth != null && depth > 0);
     }
 }
