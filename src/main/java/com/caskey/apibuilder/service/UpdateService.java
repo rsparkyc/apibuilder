@@ -7,13 +7,15 @@ import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 
 public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> extends BaseService<T, D> {
 
-    default T update(final D entityDTO) throws MissingEntityException {
+    default T update(final Long id, final D entityDTO) throws MissingEntityException {
         BaseEntityAdapter<T, D> adapter = getAdapterRegistry().getAdapter(getEntityType());
 
-        T entity = getRepository().findOne(entityDTO.getId());
+        T entity = getRepository().findOne(id);
         if (entity == null) {
             throw new MissingEntityException();
         }
+        //override any id they passed in the object, we should be using the id we passed in
+        entityDTO.setId(id);
 
         adapter.mapFromDtoToEntity(entityDTO, entity);
 
@@ -22,8 +24,8 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         return entity;
     }
 
-    default D updateAndGetDTO(final D entityDTO) throws MissingEntityException {
-        T entity = update(entityDTO);
+    default D updateAndGetDTO(final Long id, final D entityDTO) throws MissingEntityException {
+        T entity = update(id, entityDTO);
         return getAdapter().toDTO(entity);
     }
 

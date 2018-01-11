@@ -1,6 +1,5 @@
 package com.caskey.apibuilder.adapter.registry;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +8,7 @@ import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingAdapterException;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
+import com.caskey.apibuilder.util.ReflectionUtil;
 
 public class AdapterRegistry {
 
@@ -16,8 +16,7 @@ public class AdapterRegistry {
 
     public AdapterRegistry(final BaseEntityAdapter<BaseEntity, BaseEntityDTO>[] adapters) {
         for (BaseEntityAdapter<BaseEntity, BaseEntityDTO> adapter : adapters) {
-            Type entityType = ((ParameterizedType) adapter.getClass().getGenericSuperclass())
-                    .getActualTypeArguments()[0];
+            Type entityType = ReflectionUtil.getEntityTypeFromClass(adapter.getClass());
             registrationMap.put(entityType, adapter);
         }
     }
@@ -30,7 +29,7 @@ public class AdapterRegistry {
         }
 
         throw new MissingAdapterException(
-                "The create adapter for " + entityType.getTypeName() + " was missing.");
+                "The entity adapter for " + entityType.getTypeName() + " was missing.");
     }
 
 }

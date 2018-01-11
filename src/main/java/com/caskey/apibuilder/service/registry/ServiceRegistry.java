@@ -1,6 +1,5 @@
 package com.caskey.apibuilder.service.registry;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +8,7 @@ import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingServiceException;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.BaseService;
+import com.caskey.apibuilder.util.ReflectionUtil;
 
 public abstract class ServiceRegistry<T extends BaseEntity, D extends BaseEntityDTO,
         S extends BaseService<T, D>> {
@@ -16,17 +16,7 @@ public abstract class ServiceRegistry<T extends BaseEntity, D extends BaseEntity
 
     public ServiceRegistry(final S[] services) {
         for (S service : services) {
-            Type genericSuperclass = service.getClass().getGenericSuperclass();
-            ParameterizedType pType;
-            if (genericSuperclass instanceof ParameterizedType) {
-                // this class extends another class which is parameterized,
-                // so we'll assume we can use its types to pull out the entity class
-                pType = (ParameterizedType) genericSuperclass;
-            } else {
-                pType = (ParameterizedType) service.getClass().getGenericInterfaces()[0];
-            }
-
-            Type entityType = pType.getActualTypeArguments()[0];
+            Type entityType = ReflectionUtil.getEntityTypeFromClass(service.getClass());
             registrationMap.put(entityType, service);
         }
     }

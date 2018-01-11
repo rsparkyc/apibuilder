@@ -20,11 +20,11 @@ public class CRUDService<T extends BaseEntity, D extends BaseEntityDTO> implemen
 
     @Override
     public RepositoryRegistry getRepositoryRegistry() {
-        return null;
+        return repositoryRegistry;
     }
 
     @Override
     public AdapterRegistry getAdapterRegistry() {
-        return null;
+        return adapterRegistry;
     }
 }
