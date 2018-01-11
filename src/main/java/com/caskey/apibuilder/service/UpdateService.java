@@ -1,6 +1,5 @@
 package com.caskey.apibuilder.service;
 
-import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingEntityException;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
@@ -8,7 +7,6 @@ import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> extends BaseService<T, D> {
 
     default T update(final Long id, final D entityDTO) throws MissingEntityException {
-        BaseEntityAdapter<T, D> adapter = getAdapterRegistry().getAdapter(getEntityType());
 
         T entity = getRepository().findOne(id);
         if (entity == null) {
@@ -17,7 +15,7 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         //override any id they passed in the object, we should be using the id we passed in
         entityDTO.setId(id);
 
-        adapter.mapFromDtoToEntity(entityDTO, entity);
+        getAdapter().mapFromDtoToEntity(entityDTO, entity);
 
         entity = getRepository().save(entity);
         afterUpdate(entity);

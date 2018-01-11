@@ -11,17 +11,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.CreateService;
-import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
 
 public interface CreateController<T extends BaseEntity, D extends BaseEntityDTO>
-        extends BaseController<T> {
-
-    CreateServiceRegistry<T, D> getCreateServiceRegistry();
+        extends BaseController<T, D> {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody default HttpEntity<D> create(@RequestBody final D entityDTO) {
 
-        CreateService<T, D> createService = getCreateServiceRegistry().getService(getEntityType());
+        CreateService<T, D> createService =
+                getRegistryWrapper().getCreateServiceRegistry().getService(getEntityType());
         return new ResponseEntity<>(createService.createAndGetDTO(entityDTO), HttpStatus.CREATED);
     }
 }

@@ -11,16 +11,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.GetService;
-import com.caskey.apibuilder.service.registry.GetServiceRegistry;
 
-public interface GetController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T> {
-
-    GetServiceRegistry<T, D> getGetServiceRegistry();
+public interface GetController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T, D> {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody default HttpEntity<D> get(@PathVariable final Long id) {
 
-        GetService<T, D> getService = getGetServiceRegistry().getService(getEntityType());
+        GetService<T, D> getService =
+                getRegistryWrapper().getGetServiceRegistry().getService(getEntityType());
         D byId = getService.getDTOById(id);
         HttpStatus httpStatus = byId == null ? HttpStatus.NOT_FOUND : HttpStatus.OK;
 
