@@ -3,10 +3,24 @@ package com.caskey.apibuilder.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 
 public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEntityDTO> {
+
+    private RegistryWrapper registryWrapper;
+
+    @Autowired
+    public void setRegistryWrapper(final RegistryWrapper registryWrapper) {
+        this.registryWrapper = registryWrapper;
+    }
+
+    protected RegistryWrapper getRegistryWrapper() {
+        return registryWrapper;
+    }
 
     protected abstract T createNewEntity();
 
