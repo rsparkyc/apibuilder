@@ -16,7 +16,7 @@ import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
 public interface CreateController<T extends BaseEntity, D extends BaseEntityDTO>
         extends BaseController<T> {
 
-    CreateServiceRegistry getCreateServiceRegistry();
+    CreateServiceRegistry<T, D> getCreateServiceRegistry();
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody default HttpEntity<D> create(@RequestBody final D entityDTO) {

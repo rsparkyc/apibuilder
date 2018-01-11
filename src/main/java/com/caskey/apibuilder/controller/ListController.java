@@ -14,7 +14,7 @@ import com.caskey.apibuilder.service.registry.ListServiceRegistry;
 
 public interface ListController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T> {
 
-    ListServiceRegistry getListServiceRegistry();
+    ListServiceRegistry<T, D> getListServiceRegistry();
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody default HttpEntity<Iterable<D>> list() {

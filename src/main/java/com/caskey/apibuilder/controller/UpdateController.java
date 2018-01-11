@@ -14,7 +14,7 @@ import com.caskey.apibuilder.service.UpdateService;
 import com.caskey.apibuilder.service.registry.UpdateServiceRegistry;
 
 public interface UpdateController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T> {
-    UpdateServiceRegistry getUpdateServiceRegistry();
+    UpdateServiceRegistry<T, D> getUpdateServiceRegistry();
 
     @RequestMapping(value = "/")
     @ResponseBody default HttpEntity<D> update(@RequestBody final D entityDTO) {

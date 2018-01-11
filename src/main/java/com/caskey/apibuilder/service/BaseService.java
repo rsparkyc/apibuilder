@@ -12,7 +12,7 @@ import com.caskey.apibuilder.exception.MissingRepositoryException;
 import com.caskey.apibuilder.repository.registry.RepositoryRegistry;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 
-interface BaseService<T extends BaseEntity, D extends BaseEntityDTO> {
+public interface BaseService<T extends BaseEntity, D extends BaseEntityDTO> {
 
     RepositoryRegistry getRepositoryRegistry();
 
