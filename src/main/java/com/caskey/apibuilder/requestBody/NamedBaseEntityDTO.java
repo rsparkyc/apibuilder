@@ -1,8 +1,3 @@
-/**
- * Copyright (C) 2018 by Amobee Inc.
- * All Rights Reserved.
- */
-
 package com.caskey.apibuilder.requestBody;
 
 public class NamedBaseEntityDTO extends BaseEntityDTO {
