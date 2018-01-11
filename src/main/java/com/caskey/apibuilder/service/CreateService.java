@@ -3,9 +3,9 @@ package com.caskey.apibuilder.service;
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.requestBody.EntityDTO;
+import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 
-public interface CreateService<T extends BaseEntity, D extends EntityDTO> extends BaseService<T> {
+public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> extends BaseService<T> {
 
     AdapterRegistry getAdapterRegistry();
 

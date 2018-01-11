@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.requestBody.EntityDTO;
+import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.CreateService;
 import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
 
-public interface CreateController<T extends BaseEntity, D extends EntityDTO>
+public interface CreateController<T extends BaseEntity, D extends BaseEntityDTO>
         extends BaseController<T> {
 
     CreateServiceRegistry getCreateServiceRegistry();

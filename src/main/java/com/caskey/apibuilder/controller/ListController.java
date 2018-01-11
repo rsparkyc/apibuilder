@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.requestBody.EntityDTO;
+import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.ListService;
 import com.caskey.apibuilder.service.registry.ListServiceRegistry;
 
-public interface ListController<T extends BaseEntity, D extends EntityDTO> extends BaseController<T> {
+public interface ListController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T> {
 
     ListServiceRegistry getListServiceRegistry();
 

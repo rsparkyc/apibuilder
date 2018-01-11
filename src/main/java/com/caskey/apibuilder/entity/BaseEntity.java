@@ -10,9 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @MappedSuperclass
 public class BaseEntity {
@@ -58,12 +55,6 @@ public class BaseEntity {
 
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
-    }
-
-    @JsonIgnore
-    @Transient
-    public BaseEntity getSelf() {
-        return this;
     }
 
     @PrePersist

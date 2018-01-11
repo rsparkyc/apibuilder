@@ -1,8 +1,3 @@
-/**
- * Copyright (C) 2017 by Amobee Inc.
- * All Rights Reserved.
- */
-
 package com.caskey.apibuilder.controller;
 
 import org.springframework.http.HttpEntity;
@@ -16,11 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
 import com.caskey.apibuilder.entity.BaseEntity;
-import com.caskey.apibuilder.requestBody.EntityDTO;
+import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.GetService;
 import com.caskey.apibuilder.service.registry.GetServiceRegistry;
 
-public interface GetController<T extends BaseEntity, D extends EntityDTO> extends BaseController<T> {
+public interface GetController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T> {
 
     GetServiceRegistry getGetServiceRegistry();
 
