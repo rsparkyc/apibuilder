@@ -9,28 +9,27 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.repository.CrudRepository;
 
 import com.caskey.apibuilder.entity.BaseEntity;
+import com.caskey.apibuilder.repository.BaseEntityRepository;
 
 public class RepositoryRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(RepositoryRegistry.class);
 
-    private final Map<Class<? extends CrudRepository<?, ?>>, Optional<CrudRepository<?, ?>>> repositoryMap;
-    //private final Map<Type, Optional<CrudRepository<?, ?>>> repositoryByEntityTypeMap;
+    private final Map<Class<? extends BaseEntityRepository<?>>, Optional<BaseEntityRepository<?>>>
+            repositoryMap;
 
-    public RepositoryRegistry(final CrudRepository<?, ?>... repositories) {
+    public RepositoryRegistry(final BaseEntityRepository<?>... repositories) {
         repositoryMap = new HashMap<>();
-        //repositoryByEntityTypeMap = new HashMap<>();
-        for (CrudRepository<?, ?> r : repositories) {
+        for (BaseEntityRepository<?> r : repositories) {
             Class<?>[] interfaces = r.getClass().getInterfaces();
             for (Class<?> theInterface : interfaces) {
-                if (CrudRepository.class.isAssignableFrom(theInterface)) {
+                if (BaseEntityRepository.class.isAssignableFrom(theInterface)) {
                     @SuppressWarnings("unchecked")
-                    Class<? extends CrudRepository<?, ?>> repositoryClass =
-                            (Class<? extends CrudRepository<?, ?>>) theInterface
-                                    .asSubclass(CrudRepository.class);
+                    Class<? extends BaseEntityRepository<?>> repositoryClass =
+                            (Class<? extends BaseEntityRepository<?>>) theInterface
+                                    .asSubclass(BaseEntityRepository.class);
                     // We update an empty value in the map if there is more than
                     // one Repository subclass that corresponds to a given interface.
                     if (repositoryMap.containsKey(theInterface)) {
@@ -43,18 +42,18 @@ public class RepositoryRegistry {
         }
     }
 
-    public <T extends BaseEntity> CrudRepository<T, Long> getRepository(final Type entityType) {
-        Optional<Class<? extends CrudRepository<?, ?>>> first = repositoryMap.keySet().stream()
+    public <T extends BaseEntity> BaseEntityRepository<T> getRepository(final Type entityType) {
+        Optional<Class<? extends BaseEntityRepository<?>>> first = repositoryMap.keySet().stream()
                 .filter(repoClass -> (((ParameterizedType) repoClass.getGenericInterfaces()[0])
                         .getActualTypeArguments()[0] == entityType)).findFirst();
         if (first.isPresent()) {
-            CrudRepository<T, Long> repository = (CrudRepository<T, Long>) getRepository(first.get());
+            BaseEntityRepository<T> repository = (BaseEntityRepository<T>) getRepository(first.get());
             return repository;
         }
         return null;
     }
 
-    public <R extends CrudRepository> R getRepository(final Class<R> repositoryClass) {
+    public <R extends BaseEntityRepository> R getRepository(final Class<R> repositoryClass) {
         @SuppressWarnings({ "unchecked", "SuspiciousMethodCalls" })
         R ret = (R) repositoryMap.get(repositoryClass)
                 .orElseThrow(() -> new NoSuchElementException(repositoryClass.getName()));
@@ -62,11 +61,11 @@ public class RepositoryRegistry {
     }
 
     public <T extends BaseEntity> T save(final T entity) {
-        Optional<Class<? extends CrudRepository<?, ?>>> first = repositoryMap.keySet().stream()
+        Optional<Class<? extends BaseEntityRepository<?>>> first = repositoryMap.keySet().stream()
                 .filter(repoClass -> (((ParameterizedType) repoClass.getGenericInterfaces()[0])
                         .getActualTypeArguments()[0] == entity.getClass())).findFirst();
         if (first.isPresent()) {
-            CrudRepository<T, ?> repository = (CrudRepository<T, ?>) getRepository(first.get());
+            BaseEntityRepository<T> repository = (BaseEntityRepository<T>) getRepository(first.get());
             return repository.save(entity);
         }
         NoSuchElementException ex =
