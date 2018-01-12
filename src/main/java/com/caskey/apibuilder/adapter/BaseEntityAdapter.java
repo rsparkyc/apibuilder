@@ -46,11 +46,11 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         return entity;
     }
 
-    public final D toDTO(final T entity) {
+    public D toDTO(final T entity) {
         return toDTO(entity, 0L);
     }
 
-    public final D toDTO(final T entity, final Long depth) {
+    public D toDTO(final T entity, final Long depth) {
         if (entity == null) {
             return null;
         }
@@ -60,6 +60,11 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         dto.setModifiedDate(entity.getModifiedDate());
         dto.setEntityType(entity.getEntityType());
         mapFromEntityToDTO(entity, dto, depth);
+
+        if (shouldProcessDeeper(depth)) {
+            mapNestedEntitiesToDTO(entity, dto, getNextDepth(depth));
+        }
+
         return dto;
     }
 
@@ -75,16 +80,21 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         List<D> result = new ArrayList<>();
         entities.forEach(e -> result.add(toDTO(e, depth)));
         return result;
+
     }
 
-    protected long getNextDepth(final Long depth) {
+    private long getNextDepth(final Long depth) {
         if (depth != null && depth > 0) {
             return depth - 1;
         }
         return 0L;
     }
 
-    protected boolean shouldProcessDeeper(final Long depth) {
+    private boolean shouldProcessDeeper(final Long depth) {
         return (depth != null && depth > 0);
     }
+
+    protected void mapNestedEntitiesToDTO(final T entity, final D dto, final long nextDepth) {
+    }
+
 }
