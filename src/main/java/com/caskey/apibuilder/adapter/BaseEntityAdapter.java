@@ -3,13 +3,18 @@ package com.caskey.apibuilder.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
+import com.caskey.apibuilder.util.ReflectionUtil;
 
 public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEntityDTO> {
+
+    private static final Logger logger = LoggerFactory.getLogger(BaseEntityAdapter.class);
 
     private RegistryWrapper registryWrapper;
 
@@ -22,9 +27,13 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         return registryWrapper;
     }
 
-    protected abstract T createNewEntity();
+    protected T createNewEntity() {
+        return ReflectionUtil.getTypeArgumentInstance(this.getClass(), 0);
+    }
 
-    protected abstract D createNewDTO();
+    protected D createNewDTO() {
+        return ReflectionUtil.getTypeArgumentInstance(this.getClass(), 1);
+    }
 
     public final T toEntity(final D entityDTO) {
         if (entityDTO == null) {
