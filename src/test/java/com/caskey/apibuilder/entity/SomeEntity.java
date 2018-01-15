@@ -9,6 +9,9 @@ public class SomeEntity extends BaseEntity {
     private boolean awesome;
     private BaseChildEntity someUnknownChild;
 
+    private HasAEntity iHasA;
+    private List<HasAEntity> iHasSome;
+
     public SomeOtherEntity getObjectX() {
         return objectX;
     }
@@ -39,6 +42,22 @@ public class SomeEntity extends BaseEntity {
 
     public void setSomeUnknownChild(final BaseChildEntity someUnknownChild) {
         this.someUnknownChild = someUnknownChild;
+    }
+
+    public HasAEntity getiHasA() {
+        return iHasA;
+    }
+
+    public void setiHasA(final HasAEntity iHasA) {
+        this.iHasA = iHasA;
+    }
+
+    public List<HasAEntity> getiHasSome() {
+        return iHasSome;
+    }
+
+    public void setiHasSome(final List<HasAEntity> iHasSome) {
+        this.iHasSome = iHasSome;
     }
 }
 

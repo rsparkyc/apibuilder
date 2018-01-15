@@ -10,6 +10,9 @@ public class SomeDTO extends BaseEntityDTO {
     private List<BaseChildDTO> children;
     private BaseChildDTO someUnknownChild;
 
+    private HasADTO iHasA;
+    private List<HasADTO> iHasSome;
+
     public SomeOtherDTO getObjectX() {
         return objectX;
     }
@@ -40,5 +43,21 @@ public class SomeDTO extends BaseEntityDTO {
 
     public void setSomeUnknownChild(final BaseChildDTO someUnknownChild) {
         this.someUnknownChild = someUnknownChild;
+    }
+
+    public HasADTO getiHasA() {
+        return iHasA;
+    }
+
+    public void setiHasA(final HasADTO iHasA) {
+        this.iHasA = iHasA;
+    }
+
+    public List<HasADTO> getiHasSome() {
+        return iHasSome;
+    }
+
+    public void setiHasSome(final List<HasADTO> iHasSome) {
+        this.iHasSome = iHasSome;
     }
 }

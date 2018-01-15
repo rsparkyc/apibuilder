@@ -134,6 +134,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                     "found a getter of " + getterMethod.getName() + ", but could not determine setter name");
             return;
         }
+
         Type returnType = getterMethod.getGenericReturnType();
         try {
 
@@ -174,14 +175,19 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                 // based match.  This will require looping through all the declared methods and finding
                 // the right one by name.
 
-                Method setterMethod = Arrays.stream(toClass.getDeclaredMethods())
+                Method setterMethod = Arrays.stream(toClass.getMethods())
                         .filter(method -> method.getName().equals(setterMethodName))
                         .collect(CustomCollectors.singletonOrNullCollector());
                 if (setterMethod != null) {
                     try {
                         Object fromValue = getterMethod.invoke(from);
-                        Object result = createAndMapObject(getNextDepth(depth), fromValue);
-                        setterMethod.invoke(to, result);
+                        if (setterMethod.getParameters()[0].getType()
+                                .isAssignableFrom(fromValue.getClass())) {
+                            setterMethod.invoke(to, fromValue);
+                        } else {
+                            Object result = createAndMapObject(getNextDepth(depth), fromValue);
+                            setterMethod.invoke(to, result);
+                        }
                     } catch (MissingAdapterException | IllegalAccessException | InvocationTargetException
                             ex) {
                         logger.warn("could not auto-map field");

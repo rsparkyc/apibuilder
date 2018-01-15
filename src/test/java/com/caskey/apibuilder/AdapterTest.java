@@ -6,12 +6,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
-import com.caskey.apibuilder.adapter.SomeAdapter;
-import com.caskey.apibuilder.adapter.SomeOtherAdapter;
 import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
+import com.caskey.apibuilder.dto.HasALongDTO;
 import com.caskey.apibuilder.dto.LongChildDTO;
 import com.caskey.apibuilder.dto.SomeDTO;
+import com.caskey.apibuilder.dto.SomeOtherDTO;
 import com.caskey.apibuilder.dto.StringChildDTO;
+import com.caskey.apibuilder.entity.HasALongEntity;
 import com.caskey.apibuilder.entity.LongChildEntity;
 import com.caskey.apibuilder.entity.SomeEntity;
 import com.caskey.apibuilder.entity.SomeOtherEntity;
@@ -24,10 +25,13 @@ public class AdapterTest {
 
         RegistryWrapper registryWrapper = new RegistryWrapper();
 
-        SomeAdapter someAdapter = new SomeAdapter();
+        BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = new BaseEntityAdapter<SomeEntity, SomeDTO>() {
+        };
         someAdapter.setRegistryWrapper(registryWrapper);
 
-        SomeOtherAdapter someOtherAdapter = new SomeOtherAdapter();
+        BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO> someOtherAdapter =
+                new BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO>() {
+                };
         someOtherAdapter.setRegistryWrapper(registryWrapper);
 
         BaseEntityAdapter<StringChildEntity, StringChildDTO> stringChildAdapter =
@@ -40,12 +44,18 @@ public class AdapterTest {
                 };
         longChildAdapter.setRegistryWrapper(registryWrapper);
 
+        BaseEntityAdapter<HasALongEntity, HasALongDTO> hasALongAdapter =
+                new BaseEntityAdapter<HasALongEntity, HasALongDTO>() {
+                };
+        hasALongAdapter.setRegistryWrapper(registryWrapper);
+
         AdapterRegistry adapterRegistry =
                 new AdapterRegistry(new BaseEntityAdapter[] {
                         someAdapter,
                         someOtherAdapter,
                         stringChildAdapter,
-                        longChildAdapter });
+                        longChildAdapter,
+                        hasALongAdapter });
 
         registryWrapper.setAdapterRegistry(adapterRegistry);
 
@@ -72,7 +82,16 @@ public class AdapterTest {
 
         someEntity.setSomeUnknownChild(someEntity.getChildren().get(0));
 
-        SomeDTO dto = someAdapter.toDTO(someEntity, 1L);
+        HasALongEntity hasALongEntity = new HasALongEntity();
+        hasALongEntity.setSomething(123L);
+        hasALongEntity.setId(5L);
+
+        someEntity.setiHasA(hasALongEntity);
+        someEntity.setiHasSome(Arrays.asList(someEntity.getiHasA()));
+
+        // work some magic
+        SomeDTO dto = someAdapter.toDTO(someEntity, 10L);
+
         Assert.assertNotNull(dto);
         Assert.assertNotNull(dto.getObjectX());
         Assert.assertEquals(someEntity.getObjectX().getId(), dto.getObjectX().getId());
@@ -82,10 +101,44 @@ public class AdapterTest {
 
         Assert.assertNotNull(dto.getSomeUnknownChild());
 
+        Assert.assertNotNull(dto.getiHasA());
+        Assert.assertEquals(hasALongEntity.getSomething(), dto.getiHasA().getSomething());
+
+        Assert.assertNotNull(dto.getiHasSome());
+        Assert.assertEquals(1, dto.getiHasSome().size());
+        Assert.assertEquals(hasALongEntity.getSomething(), dto.getiHasSome().get(0).getSomething());
+
         //Let's try the other way
 
         SomeEntity reversedEntity = someAdapter.toEntity(dto);
         Assert.assertNotNull(reversedEntity);
+
+    }
+
+    @Test
+    public void testGenericAutomapper() {
+
+        RegistryWrapper registryWrapper = new RegistryWrapper();
+
+        BaseEntityAdapter<HasALongEntity, HasALongDTO> hasALongAdapter =
+                new BaseEntityAdapter<HasALongEntity, HasALongDTO>() {
+                };
+        hasALongAdapter.setRegistryWrapper(registryWrapper);
+
+        AdapterRegistry adapterRegistry =
+                new AdapterRegistry(new BaseEntityAdapter[] { hasALongAdapter });
+
+        registryWrapper.setAdapterRegistry(adapterRegistry);
+
+        HasALongEntity hasALongEntity = new HasALongEntity();
+        hasALongEntity.setSomething(123L);
+        hasALongEntity.setId(5L);
+
+        // work some magic
+        HasALongDTO dto = hasALongAdapter.toDTO(hasALongEntity, 100L);
+
+        Assert.assertNotNull(dto);
+        Assert.assertEquals(hasALongEntity.getSomething(), dto.getSomething());
 
     }
 }
