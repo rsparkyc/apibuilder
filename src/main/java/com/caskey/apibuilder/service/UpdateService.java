@@ -1,5 +1,7 @@
 package com.caskey.apibuilder.service;
 
+import java.util.Date;
+
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingEntityException;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
@@ -12,15 +14,19 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         if (entity == null) {
             throw new MissingEntityException();
         }
+        Date originalCreatedDate = entity.getCreatedDate();
+
         //override any id they passed in the object, we should be using the id we passed in
         entityDTO.setId(id);
 
-        getAdapter().mapFromDtoToEntity(entityDTO, entity);
+        getAdapter().doReflectiveFieldMapping(entityDTO, entity, Long.MAX_VALUE);
 
-        entity = getRepository().save(entity);
-        afterUpdate(entity);
-        return entity;
+        // just to make sure we didn't try to modify that with the DTO
+        entity.setCreatedDate(originalCreatedDate);
+
+        return update(entity);
     }
+
 
     default D updateAndGetDTO(final Long id, final D entityDTO, final Long depth)
             throws MissingEntityException {
@@ -32,9 +38,15 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         if (entity == null) {
             throw new MissingEntityException();
         }
+
+        beforeUpdate(entity);
         T updatedEntity = getRepository().save(entity);
         afterUpdate(updatedEntity);
         return updatedEntity;
+    }
+
+    default void beforeUpdate(final T entity) {
+        //Not required, but able to be overridden
     }
 
     default void afterUpdate(final T updatedEntity) {

@@ -41,4 +41,8 @@ public class ReflectionUtil {
         return getTypeAtGenericIndex(clazz, 0);
     }
 
+    public static Type getDTOTypeFromClass(final Class clazz) {
+        return getTypeAtGenericIndex(clazz, 1);
+    }
+
 }
