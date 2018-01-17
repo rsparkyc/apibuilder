@@ -75,7 +75,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     public final D toDTO(final T entity, final Integer depth) {
-        if (entity == null) {
+        if (entity == null || !hasPermission(entity)) {
             return null;
         }
         D dto = createNewDTO();
@@ -214,11 +214,23 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         BaseEntityAdapter adapter =
                 registryWrapper.getAdapterRegistry().getAdapter(item.getClass());
         if (item instanceof BaseEntity) {
-            return adapter.toDTO((BaseEntity) item, nextDepth);
+            BaseEntity baseEntity = (BaseEntity) item;
+            return adapter.toDTO(baseEntity, nextDepth);
         } else if (item instanceof BaseEntityDTO) {
             return adapter.toEntity((BaseEntityDTO) item);
         }
         return null;
+    }
+
+    protected boolean hasPermission(final BaseEntity baseEntity) {
+        try {
+            BaseEntity one = getRegistryWrapper().getRepositoryRegistry().getRepository(baseEntity.getClass())
+                    .getOne(baseEntity.getId());
+            return one.getId().equals(baseEntity.getId());
+        } catch (Exception ex) {
+            // swallow, and return false
+            return false;
+        }
     }
 
     public final List<D> toDTOs(final Iterable<T> entities) {
@@ -229,7 +241,6 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         List<D> result = new ArrayList<>();
         entities.forEach(e -> result.add(toDTO(e, depth)));
         return result;
-
     }
 
     private int getNextDepth(final Integer depth) {
