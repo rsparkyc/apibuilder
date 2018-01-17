@@ -141,4 +141,54 @@ public class AdapterTest {
         Assert.assertEquals(hasALongEntity.getSomething(), dto.getSomething());
 
     }
+
+    @Test
+    public void testNullField() {
+
+        RegistryWrapper registryWrapper = new RegistryWrapper();
+
+        BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = new BaseEntityAdapter<SomeEntity, SomeDTO>() {
+        };
+        someAdapter.setRegistryWrapper(registryWrapper);
+
+        BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO> someOtherAdapter =
+                new BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO>() {
+                };
+        someOtherAdapter.setRegistryWrapper(registryWrapper);
+
+        BaseEntityAdapter<StringChildEntity, StringChildDTO> stringChildAdapter =
+                new BaseEntityAdapter<StringChildEntity, StringChildDTO>() {
+                };
+        stringChildAdapter.setRegistryWrapper(registryWrapper);
+
+        BaseEntityAdapter<LongChildEntity, LongChildDTO> longChildAdapter =
+                new BaseEntityAdapter<LongChildEntity, LongChildDTO>() {
+                };
+        longChildAdapter.setRegistryWrapper(registryWrapper);
+
+        BaseEntityAdapter<HasALongEntity, HasALongDTO> hasALongAdapter =
+                new BaseEntityAdapter<HasALongEntity, HasALongDTO>() {
+                };
+        hasALongAdapter.setRegistryWrapper(registryWrapper);
+
+        AdapterRegistry adapterRegistry =
+                new AdapterRegistry(new BaseEntityAdapter[] {
+                        someAdapter,
+                        someOtherAdapter,
+                        stringChildAdapter,
+                        longChildAdapter,
+                        hasALongAdapter });
+
+        registryWrapper.setAdapterRegistry(adapterRegistry);
+
+        SomeEntity someEntity = new SomeEntity();
+        someEntity.setId(2L);
+        someEntity.setAwesome(true);
+
+        // work some magic
+        SomeDTO dto = someAdapter.toDTO(someEntity, 10L);
+
+        Assert.assertNotNull(dto);
+        Assert.assertNull(dto.getObjectX());
+    }
 }

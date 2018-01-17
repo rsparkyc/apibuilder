@@ -149,20 +149,22 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                 // We're only going do do this if we want to go deeper
                 if (shouldProcessDeeper(depth)) {
                     Object fromValue = getterMethod.invoke(from);
-                    Class<?> nonGenericSetterType = setterMethod.getParameters()[0].getType();
-                    if (nonGenericSetterType.isAssignableFrom(fromValue.getClass())) {
-                        // At this point we're dealing with a valid method mapping
+                    if (fromValue != null) {
+                        Class<?> nonGenericSetterType = setterMethod.getParameters()[0].getType();
+                        if (nonGenericSetterType.isAssignableFrom(fromValue.getClass())) {
+                            // At this point we're dealing with a valid method mapping
 
-                        // Let's see if we're dealing with a list here
-                        if (fromValue instanceof List) {
+                            // Let's see if we're dealing with a list here
+                            if (fromValue instanceof List) {
 
-                            // TODO: can we find a way to do generics here?
-                            List fromList = (List) fromValue;
+                                // TODO: can we find a way to do generics here?
+                                List fromList = (List) fromValue;
 
-                            Object collect = fromList.stream().map(item ->
-                                    createAndMapObject(getNextDepth(depth), item)
-                            ).collect(Collectors.toList());
-                            setterMethod.invoke(to, collect);
+                                Object collect = fromList.stream().map(item ->
+                                        createAndMapObject(getNextDepth(depth), item)
+                                ).collect(Collectors.toList());
+                                setterMethod.invoke(to, collect);
+                            }
                         }
                     }
                 }
@@ -181,12 +183,14 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                 if (setterMethod != null) {
                     try {
                         Object fromValue = getterMethod.invoke(from);
-                        if (setterMethod.getParameters()[0].getType()
-                                .isAssignableFrom(fromValue.getClass())) {
-                            setterMethod.invoke(to, fromValue);
-                        } else {
-                            Object result = createAndMapObject(getNextDepth(depth), fromValue);
-                            setterMethod.invoke(to, result);
+                        if (fromValue != null) {
+                            if (setterMethod.getParameters()[0].getType()
+                                    .isAssignableFrom(fromValue.getClass())) {
+                                setterMethod.invoke(to, fromValue);
+                            } else {
+                                Object result = createAndMapObject(getNextDepth(depth), fromValue);
+                                setterMethod.invoke(to, result);
+                            }
                         }
                     } catch (MissingAdapterException | IllegalAccessException | InvocationTargetException
                             ex) {
