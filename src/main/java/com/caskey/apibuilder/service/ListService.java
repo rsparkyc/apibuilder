@@ -8,7 +8,7 @@ public interface ListService<T extends BaseEntity, D extends BaseEntityDTO> exte
         return getRepository().findAll();
     }
 
-    default Iterable<D> listAllDTOs(final Long depth) {
+    default Iterable<D> listAllDTOs(final Integer depth) {
         return getAdapter().toDTOs(getRepository().findAll(), depth);
     }
 }

@@ -17,7 +17,7 @@ public interface GetController<T extends BaseEntity, D extends BaseEntityDTO> ex
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    default HttpEntity<D> get(@PathVariable final Long id, @RequestParam(required = false) Long depth) {
+    default HttpEntity<D> get(@PathVariable final Long id, @RequestParam(required = false) Integer depth) {
         GetService<T, D> getService =
                 getRegistryWrapper().getGetServiceRegistry().getService(getEntityType());
         D byId = getService.getDTOById(id, depth);

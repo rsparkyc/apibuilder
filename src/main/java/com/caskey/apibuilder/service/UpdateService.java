@@ -19,7 +19,7 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         //override any id they passed in the object, we should be using the id we passed in
         entityDTO.setId(id);
 
-        getAdapter().doReflectiveFieldMapping(entityDTO, entity, Long.MAX_VALUE);
+        getAdapter().doReflectiveFieldMapping(entityDTO, entity, Integer.MAX_VALUE);
 
         // just to make sure we didn't try to modify that with the DTO
         entity.setCreatedDate(originalCreatedDate);
@@ -27,8 +27,7 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         return update(entity);
     }
 
-
-    default D updateAndGetDTO(final Long id, final D entityDTO, final Long depth)
+    default D updateAndGetDTO(final Long id, final D entityDTO, final Integer depth)
             throws MissingEntityException {
         T entity = update(id, entityDTO);
         return getAdapter().toDTO(entity, depth);

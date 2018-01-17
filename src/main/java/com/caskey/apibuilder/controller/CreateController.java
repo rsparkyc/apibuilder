@@ -18,7 +18,9 @@ public interface CreateController<T extends BaseEntity, D extends BaseEntityDTO>
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    default HttpEntity<D> create(@RequestBody final D entityDTO, @RequestParam(required = false) Long depth) {
+    default HttpEntity<D> create(
+            @RequestBody final D entityDTO,
+            @RequestParam(required = false) Integer depth) {
 
         CreateService<T, D> createService =
                 getRegistryWrapper().getCreateServiceRegistry().getService(getEntityType());

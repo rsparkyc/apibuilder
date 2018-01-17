@@ -90,7 +90,7 @@ public class AdapterTest {
         someEntity.setiHasSome(Arrays.asList(someEntity.getiHasA()));
 
         // work some magic
-        SomeDTO dto = someAdapter.toDTO(someEntity, 10L);
+        SomeDTO dto = someAdapter.toDTO(someEntity, 10);
 
         Assert.assertNotNull(dto);
         Assert.assertNotNull(dto.getObjectX());
@@ -135,7 +135,7 @@ public class AdapterTest {
         hasALongEntity.setId(5L);
 
         // work some magic
-        HasALongDTO dto = hasALongAdapter.toDTO(hasALongEntity, 100L);
+        HasALongDTO dto = hasALongAdapter.toDTO(hasALongEntity, 100);
 
         Assert.assertNotNull(dto);
         Assert.assertEquals(hasALongEntity.getSomething(), dto.getSomething());
@@ -186,7 +186,7 @@ public class AdapterTest {
         someEntity.setAwesome(true);
 
         // work some magic
-        SomeDTO dto = someAdapter.toDTO(someEntity, 10L);
+        SomeDTO dto = someAdapter.toDTO(someEntity, 10);
 
         Assert.assertNotNull(dto);
         Assert.assertNull(dto.getObjectX());

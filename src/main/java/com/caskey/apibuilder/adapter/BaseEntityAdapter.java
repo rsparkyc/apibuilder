@@ -47,7 +47,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
             return null;
         }
         T entity = createNewEntity();
-        doReflectiveFieldMapping(entityDTO, entity, Long.MAX_VALUE);
+        doReflectiveFieldMapping(entityDTO, entity, Integer.MAX_VALUE);
         doAdditionalMapping(entityDTO, entity);
         return entity;
     }
@@ -71,10 +71,10 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     public final D toDTO(final T entity) {
-        return toDTO(entity, 0L);
+        return toDTO(entity, 0);
     }
 
-    public final D toDTO(final T entity, final Long depth) {
+    public final D toDTO(final T entity, final Integer depth) {
         if (entity == null) {
             return null;
         }
@@ -92,7 +92,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
      * @param from
      * @param to
      */
-    public final void doReflectiveFieldMapping(final Object from, final Object to, final Long depth) {
+    public final void doReflectiveFieldMapping(final Object from, final Object to, final Integer depth) {
         Class fromClass = from.getClass();
         Class toClass = to.getClass();
         doReflectiveFieldMapping(fromClass, from, toClass, to, depth);
@@ -103,7 +103,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
             final Object from,
             final Class toClass,
             final Object to,
-            final Long depth) {
+            final Integer depth) {
         // We're not doing any mapping on the Object level
         if (fromClass == null || toClass == null || fromClass == Object.class || toClass == Object.class) {
             return;
@@ -123,7 +123,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
             final Object from,
             final Class toClass,
             final Object to,
-            final Long depth) {
+            final Integer depth) {
         String setterMethodName;
         if (getterMethod.getName().startsWith("get")) {
             setterMethodName = "s" + getterMethod.getName().substring(1);
@@ -210,7 +210,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     @SuppressWarnings("unchecked")
-    private Object createAndMapObject(final Long nextDepth, final Object item) {
+    private Object createAndMapObject(final Integer nextDepth, final Object item) {
         BaseEntityAdapter adapter =
                 registryWrapper.getAdapterRegistry().getAdapter(item.getClass());
         if (item instanceof BaseEntity) {
@@ -222,24 +222,27 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     public final List<D> toDTOs(final Iterable<T> entities) {
-        return toDTOs(entities, 0L);
+        return toDTOs(entities, 0);
     }
 
-    public final List<D> toDTOs(final Iterable<T> entities, final Long depth) {
+    public final List<D> toDTOs(final Iterable<T> entities, final Integer depth) {
         List<D> result = new ArrayList<>();
         entities.forEach(e -> result.add(toDTO(e, depth)));
         return result;
 
     }
 
-    private long getNextDepth(final Long depth) {
+    private int getNextDepth(final Integer depth) {
         if (depth != null && depth > 0) {
+            if (depth > 5) {
+                return 4;
+            }
             return depth - 1;
         }
-        return 0L;
+        return 0;
     }
 
-    private boolean shouldProcessDeeper(final Long depth) {
+    private boolean shouldProcessDeeper(final Integer depth) {
         return (depth != null && depth > 0);
     }
 

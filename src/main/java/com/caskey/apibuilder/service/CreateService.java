@@ -19,7 +19,7 @@ public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         return entity;
     }
 
-    default D createAndGetDTO(final D entityDTO, final Long depth) {
+    default D createAndGetDTO(final D entityDTO, final Integer depth) {
         return getAdapter().toDTO(create(entityDTO), depth);
     }
 

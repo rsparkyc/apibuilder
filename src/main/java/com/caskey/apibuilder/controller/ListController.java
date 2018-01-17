@@ -15,7 +15,7 @@ import com.caskey.apibuilder.service.ListService;
 public interface ListController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T, D> {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    @ResponseBody default HttpEntity<Iterable<D>> list(@RequestParam(required = false) Long depth) {
+    @ResponseBody default HttpEntity<Iterable<D>> list(@RequestParam(required = false) Integer depth) {
         ListService<T, D> listService =
                 getRegistryWrapper().getListServiceRegistry().getService(getEntityType());
         return new ResponseEntity<>(listService.listAllDTOs(depth), HttpStatus.OK);
