@@ -23,41 +23,8 @@ public class AdapterTest {
     @Test
     public void automapping() {
 
-        RegistryWrapper registryWrapper = new RegistryWrapper();
-
-        BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = new BaseEntityAdapter<SomeEntity, SomeDTO>() {
-        };
-        someAdapter.setRegistryWrapper(registryWrapper);
-
-        BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO> someOtherAdapter =
-                new BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO>() {
-                };
-        someOtherAdapter.setRegistryWrapper(registryWrapper);
-
-        BaseEntityAdapter<StringChildEntity, StringChildDTO> stringChildAdapter =
-                new BaseEntityAdapter<StringChildEntity, StringChildDTO>() {
-                };
-        stringChildAdapter.setRegistryWrapper(registryWrapper);
-
-        BaseEntityAdapter<LongChildEntity, LongChildDTO> longChildAdapter =
-                new BaseEntityAdapter<LongChildEntity, LongChildDTO>() {
-                };
-        longChildAdapter.setRegistryWrapper(registryWrapper);
-
-        BaseEntityAdapter<HasALongEntity, HasALongDTO> hasALongAdapter =
-                new BaseEntityAdapter<HasALongEntity, HasALongDTO>() {
-                };
-        hasALongAdapter.setRegistryWrapper(registryWrapper);
-
-        AdapterRegistry adapterRegistry =
-                new AdapterRegistry(new BaseEntityAdapter[] {
-                        someAdapter,
-                        someOtherAdapter,
-                        stringChildAdapter,
-                        longChildAdapter,
-                        hasALongAdapter });
-
-        registryWrapper.setAdapterRegistry(adapterRegistry);
+        BaseEntityAdapter<SomeEntity, SomeDTO>
+                someAdapter = buildAdapterRegistry();
 
         SomeOtherEntity someOtherEntity = new SomeOtherEntity();
         someOtherEntity.setId(1L);
@@ -145,10 +112,59 @@ public class AdapterTest {
     @Test
     public void testNullField() {
 
+        BaseEntityAdapter<SomeEntity, SomeDTO>
+                someAdapter = buildAdapterRegistry();
+
+        SomeEntity someEntity = new SomeEntity();
+        someEntity.setId(2L);
+        someEntity.setAwesome(true);
+
+        // work some magic
+        SomeDTO dto = someAdapter.toDTO(someEntity, 10);
+
+        Assert.assertNotNull(dto);
+        Assert.assertNull(dto.getObjectX());
+    }
+
+    @Test
+    public void testMaxDepth() {
+
+        BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = buildAdapterRegistry(0);
+
+        SomeEntity someEntity = new SomeEntity();
+        someEntity.setId(2L);
+        someEntity.setAwesome(true);
+
+        SomeOtherEntity someOtherEntity = new SomeOtherEntity();
+        someOtherEntity.setSomeStringField("hello");
+        someOtherEntity.setId(3L);
+
+        someEntity.setObjectX(someOtherEntity);
+
+        // work some magic
+        SomeDTO dto = someAdapter.toDTO(someEntity, 10);
+
+        Assert.assertNotNull(dto);
+        Assert.assertNull(dto.getObjectX());
+    }
+
+    private BaseEntityAdapter<SomeEntity, SomeDTO> buildAdapterRegistry() {
+        return buildAdapterRegistry(null);
+    }
+
+    private BaseEntityAdapter<SomeEntity, SomeDTO> buildAdapterRegistry(final Integer maxDepth) {
         RegistryWrapper registryWrapper = new RegistryWrapper();
 
         BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = new BaseEntityAdapter<SomeEntity, SomeDTO>() {
         };
+        if (maxDepth != null) {
+            someAdapter = new BaseEntityAdapter<SomeEntity, SomeDTO>() {
+                @Override
+                protected int getMaxDepth() {
+                    return maxDepth;
+                }
+            };
+        }
         someAdapter.setRegistryWrapper(registryWrapper);
 
         BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO> someOtherAdapter =
@@ -180,15 +196,6 @@ public class AdapterTest {
                         hasALongAdapter });
 
         registryWrapper.setAdapterRegistry(adapterRegistry);
-
-        SomeEntity someEntity = new SomeEntity();
-        someEntity.setId(2L);
-        someEntity.setAwesome(true);
-
-        // work some magic
-        SomeDTO dto = someAdapter.toDTO(someEntity, 10);
-
-        Assert.assertNotNull(dto);
-        Assert.assertNull(dto.getObjectX());
+        return someAdapter;
     }
 }

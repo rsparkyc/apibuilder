@@ -234,16 +234,17 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
 
     private int getNextDepth(final Integer depth) {
         if (depth != null && depth > 0) {
-            if (depth > 5) {
-                return 4;
-            }
-            return depth - 1;
+            return Integer.min(depth, getMaxDepth()) - 1;
         }
         return 0;
     }
 
     private boolean shouldProcessDeeper(final Integer depth) {
-        return (depth != null && depth > 0);
+        return depth != null && Integer.min(getMaxDepth(), depth) > 0;
+    }
+
+    protected int getMaxDepth() {
+        return 5;
     }
 
 }
