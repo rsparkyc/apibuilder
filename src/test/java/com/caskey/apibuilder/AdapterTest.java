@@ -12,6 +12,7 @@ import com.caskey.apibuilder.dto.LongChildDTO;
 import com.caskey.apibuilder.dto.SomeDTO;
 import com.caskey.apibuilder.dto.SomeOtherDTO;
 import com.caskey.apibuilder.dto.StringChildDTO;
+import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.entity.HasALongEntity;
 import com.caskey.apibuilder.entity.LongChildEntity;
 import com.caskey.apibuilder.entity.SomeEntity;
@@ -23,8 +24,7 @@ public class AdapterTest {
     @Test
     public void automapping() {
 
-        BaseEntityAdapter<SomeEntity, SomeDTO>
-                someAdapter = buildAdapterRegistry();
+        BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = buildAdapterRegistry();
 
         SomeOtherEntity someOtherEntity = new SomeOtherEntity();
         someOtherEntity.setId(1L);
@@ -89,6 +89,9 @@ public class AdapterTest {
 
         BaseEntityAdapter<HasALongEntity, HasALongDTO> hasALongAdapter =
                 new BaseEntityAdapter<HasALongEntity, HasALongDTO>() {
+                    @Override protected boolean hasPermission(final BaseEntity baseEntity) {
+                        return true;
+                    }
                 };
         hasALongAdapter.setRegistryWrapper(registryWrapper);
 
@@ -112,8 +115,7 @@ public class AdapterTest {
     @Test
     public void testNullField() {
 
-        BaseEntityAdapter<SomeEntity, SomeDTO>
-                someAdapter = buildAdapterRegistry();
+        BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = buildAdapterRegistry();
 
         SomeEntity someEntity = new SomeEntity();
         someEntity.setId(2L);
@@ -156,6 +158,10 @@ public class AdapterTest {
         RegistryWrapper registryWrapper = new RegistryWrapper();
 
         BaseEntityAdapter<SomeEntity, SomeDTO> someAdapter = new BaseEntityAdapter<SomeEntity, SomeDTO>() {
+            @Override
+            protected boolean hasPermission(final BaseEntity baseEntity) {
+                return true;
+            }
         };
         if (maxDepth != null) {
             someAdapter = new BaseEntityAdapter<SomeEntity, SomeDTO>() {
@@ -163,27 +169,48 @@ public class AdapterTest {
                 protected int getMaxDepth() {
                     return maxDepth;
                 }
+
+                @Override
+                protected boolean hasPermission(final BaseEntity baseEntity) {
+                    return true;
+                }
             };
         }
         someAdapter.setRegistryWrapper(registryWrapper);
 
         BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO> someOtherAdapter =
                 new BaseEntityAdapter<SomeOtherEntity, SomeOtherDTO>() {
+                    @Override
+                    protected boolean hasPermission(final BaseEntity baseEntity) {
+                        return true;
+                    }
                 };
         someOtherAdapter.setRegistryWrapper(registryWrapper);
 
         BaseEntityAdapter<StringChildEntity, StringChildDTO> stringChildAdapter =
                 new BaseEntityAdapter<StringChildEntity, StringChildDTO>() {
+                    @Override
+                    protected boolean hasPermission(final BaseEntity baseEntity) {
+                        return true;
+                    }
                 };
         stringChildAdapter.setRegistryWrapper(registryWrapper);
 
         BaseEntityAdapter<LongChildEntity, LongChildDTO> longChildAdapter =
                 new BaseEntityAdapter<LongChildEntity, LongChildDTO>() {
+                    @Override
+                    protected boolean hasPermission(final BaseEntity baseEntity) {
+                        return true;
+                    }
                 };
         longChildAdapter.setRegistryWrapper(registryWrapper);
 
         BaseEntityAdapter<HasALongEntity, HasALongDTO> hasALongAdapter =
                 new BaseEntityAdapter<HasALongEntity, HasALongDTO>() {
+                    @Override
+                    protected boolean hasPermission(final BaseEntity baseEntity) {
+                        return true;
+                    }
                 };
         hasALongAdapter.setRegistryWrapper(registryWrapper);
 
