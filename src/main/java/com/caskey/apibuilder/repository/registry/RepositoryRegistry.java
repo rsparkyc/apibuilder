@@ -1,6 +1,5 @@
 package com.caskey.apibuilder.repository.registry;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.repository.BaseEntityRepository;
+import com.caskey.apibuilder.util.ReflectionUtil;
 
 public class RepositoryRegistry {
 
@@ -44,8 +44,8 @@ public class RepositoryRegistry {
 
     public <T extends BaseEntity> BaseEntityRepository<T> getRepository(final Type entityType) {
         Optional<Class<? extends BaseEntityRepository<?>>> first = repositoryMap.keySet().stream()
-                .filter(repoClass -> (((ParameterizedType) repoClass.getGenericInterfaces()[0])
-                        .getActualTypeArguments()[0] == entityType)).findFirst();
+                .filter(repoClass ->
+                        ReflectionUtil.getEntityTypeFromClass(repoClass) == entityType).findFirst();
         if (first.isPresent()) {
             BaseEntityRepository<T> repository = (BaseEntityRepository<T>) getRepository(first.get());
             return repository;
@@ -61,18 +61,7 @@ public class RepositoryRegistry {
     }
 
     public <T extends BaseEntity> T save(final T entity) {
-        Optional<Class<? extends BaseEntityRepository<?>>> first = repositoryMap.keySet().stream()
-                .filter(repoClass -> (((ParameterizedType) repoClass.getGenericInterfaces()[0])
-                        .getActualTypeArguments()[0] == entity.getClass())).findFirst();
-        if (first.isPresent()) {
-            BaseEntityRepository<T> repository = (BaseEntityRepository<T>) getRepository(first.get());
-            return repository.save(entity);
-        }
-        NoSuchElementException ex =
-                new NoSuchElementException("Could not find a matching repository to save the entity with.");
-
-        logger.error("Error saving entity", ex);
-        throw ex;
+        return getRepository(entity.getClass()).save(entity);
     }
 
 }
