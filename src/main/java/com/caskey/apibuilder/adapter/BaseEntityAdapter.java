@@ -48,26 +48,28 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         }
         T entity = createNewEntity();
         doReflectiveFieldMapping(entityDTO, entity, Integer.MAX_VALUE);
-        doAdditionalMapping(entityDTO, entity);
+        entity = doAdditionalMapping(entityDTO, entity);
         return entity;
     }
 
     /**
      * Performs any additional mapping needed that the automapper couldn't do
      *
-     * @param dto    the dto to map from
-     * @param entity the entity to map to
+     * @param fromDto    the dto to map from
+     * @param toEntity the entity to map to
      */
-    public void doAdditionalMapping(final D dto, final T entity) {
+    public T doAdditionalMapping(final D fromDto, final T toEntity) {
+        return toEntity;
     }
 
     /**
      * Performs any additional mapping needed that the automapper couldn't do
      *
-     * @param entity the entity to map from
-     * @param dto    the dto to map to
+     * @param fromEntity the entity to map from
+     * @param toDto    the dto to map to
      */
-    public void doAdditionalMapping(final T entity, final D dto) {
+    public D doAdditionalMapping(final T fromEntity, final D toDto) {
+        return toDto;
     }
 
     public final D toDTO(final T entity) {
@@ -81,7 +83,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         D dto = createNewDTO();
 
         doReflectiveFieldMapping(entity, dto, depth);
-        doAdditionalMapping(entity, dto);
+        dto = doAdditionalMapping(entity, dto);
 
         return dto;
     }
