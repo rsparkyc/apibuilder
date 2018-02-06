@@ -1,6 +1,6 @@
 package com.caskey.apibuilder.requestBody;
 
-public class NamedBaseEntityDTO extends BaseEntityDTO {
+public abstract class NamedBaseEntityDTO extends BaseEntityDTO {
     private String name;
 
     public String getName() {

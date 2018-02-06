@@ -3,6 +3,7 @@ package com.caskey.apibuilder.controller;
 import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
+import com.caskey.apibuilder.service.CRUDService;
 
 public abstract class CRUDController<T extends BaseEntity, D extends BaseEntityDTO> implements
         CreateController<T, D>, GetController<T, D>, UpdateController<T, D>, ListController<T, D> {
@@ -11,6 +12,12 @@ public abstract class CRUDController<T extends BaseEntity, D extends BaseEntityD
 
     public CRUDController(final RegistryWrapper<T, D> registryWrapper) {
         this.registryWrapper = registryWrapper;
+    }
+
+    public <S extends CRUDService<T, D>> S getService() {
+        //noinspection unchecked
+        return (S) getRegistryWrapper().getGetServiceRegistry().getService(getEntityType());
+
     }
 
     @Override

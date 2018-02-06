@@ -16,6 +16,7 @@ import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingAdapterException;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
+import com.caskey.apibuilder.service.TransactionalityService;
 import com.caskey.apibuilder.util.ReflectionUtil;
 import com.caskey.apibuilder.util.collector.CustomCollectors;
 
@@ -24,10 +25,16 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     private static final Logger logger = LoggerFactory.getLogger(BaseEntityAdapter.class);
 
     private RegistryWrapper registryWrapper;
+    private TransactionalityService transactionalityService;
 
     @Autowired
     public void setRegistryWrapper(final RegistryWrapper registryWrapper) {
         this.registryWrapper = registryWrapper;
+    }
+
+    @Autowired
+    public void setTransactionalityService(final TransactionalityService transactionalityService) {
+        this.transactionalityService = transactionalityService;
     }
 
     protected RegistryWrapper getRegistryWrapper() {
@@ -55,7 +62,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     /**
      * Performs any additional mapping needed that the automapper couldn't do
      *
-     * @param fromDto    the dto to map from
+     * @param fromDto  the dto to map from
      * @param toEntity the entity to map to
      */
     public T doAdditionalMapping(final D fromDto, final T toEntity) {
@@ -66,7 +73,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
      * Performs any additional mapping needed that the automapper couldn't do
      *
      * @param fromEntity the entity to map from
-     * @param toDto    the dto to map to
+     * @param toDto      the dto to map to
      */
     public D doAdditionalMapping(final T fromEntity, final D toDto) {
         return toDto;
@@ -226,9 +233,13 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
 
     protected boolean hasPermission(final BaseEntity baseEntity) {
         try {
-            BaseEntity one = getRegistryWrapper().getRepositoryRegistry().getRepository(baseEntity.getClass())
-                    .getOne(baseEntity.getId());
-            return one.getId().equals(baseEntity.getId());
+            return transactionalityService.withTransaction(() -> {
+
+                BaseEntity one = getRegistryWrapper().getRepositoryRegistry()
+                        .getRepository(baseEntity.getClass())
+                        .getOne(baseEntity.getId());
+                return one != null && one.getId().equals(baseEntity.getId());
+            });
         } catch (Exception ex) {
             // swallow, and return false
             return false;

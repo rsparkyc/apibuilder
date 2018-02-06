@@ -38,17 +38,19 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
             throw new MissingEntityException();
         }
 
-        beforeUpdate(entity);
-        T updatedEntity = getRepository().save(entity);
-        afterUpdate(updatedEntity);
+        T updatedEntity = beforeUpdate(entity);
+        updatedEntity = getRepository().save(updatedEntity);
+        updatedEntity = afterUpdate(updatedEntity);
         return updatedEntity;
     }
 
-    default void beforeUpdate(final T entity) {
+    default T beforeUpdate(final T entity) {
         //Not required, but able to be overridden
+        return entity;
     }
 
-    default void afterUpdate(final T updatedEntity) {
+    default T afterUpdate(final T updatedEntity) {
         //Not required, but able to be overridden
+        return updatedEntity;
     }
 }

@@ -13,9 +13,9 @@ public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         entity.setModifiedDate(null);
         entity.setCreatedDate(null);
 
-        beforeCreate(entity);
+        entity = beforeCreate(entity);
         entity = getRepository().save(entity);
-        afterCreate(entity);
+        entity = afterCreate(entity);
         return entity;
     }
 
@@ -23,12 +23,14 @@ public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         return getAdapter().toDTO(create(entityDTO), depth);
     }
 
-    default void afterCreate(final T createdEntity) {
+    default T afterCreate(final T createdEntity) {
         //Not required, but able to be overridden
+        return createdEntity;
     }
 
-    default void beforeCreate(final T entity) {
+    default T beforeCreate(final T entity) {
         //we'll use this to make sure all child entities are saved
+        return entity;
     }
 
 }
