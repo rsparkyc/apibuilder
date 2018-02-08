@@ -1,22 +1,29 @@
 package com.caskey.apibuilder.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
+import com.caskey.apibuilder.util.ChildEntitySavingUtil;
 
 public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> extends BaseService<T, D> {
 
-    default T create(final D entityDTO) {
-        T entity = getAdapter().toEntity(entityDTO);
-
+    default T create(final T entity) {
         // for creates, we'll want to make sure we have these fields wiped out
         entity.setId(null);
         entity.setModifiedDate(null);
         entity.setCreatedDate(null);
 
-        entity = beforeCreate(entity);
-        entity = getRepository().save(entity);
-        entity = afterCreate(entity);
-        return entity;
+        T theEntity = beforeCreate(entity);
+        theEntity = ChildEntitySavingUtil.saveAnyChildren(theEntity, getRegistryWrapper());
+        theEntity = getRepository().save(theEntity);
+        theEntity = afterCreate(theEntity);
+        return theEntity;
+    }
+
+    default T create(final D entityDTO) {
+        return create(getAdapter().toEntity(entityDTO));
     }
 
     default D createAndGetDTO(final D entityDTO, final Integer depth) {
@@ -31,6 +38,10 @@ public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> ex
     default T beforeCreate(final T entity) {
         //we'll use this to make sure all child entities are saved
         return entity;
+    }
+
+    final class LogHolder { // not public
+        static final Logger LOGGER = LoggerFactory.getLogger(CreateService.class);
     }
 
 }

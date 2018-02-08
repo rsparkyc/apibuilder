@@ -5,6 +5,7 @@ import java.util.Date;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingEntityException;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
+import com.caskey.apibuilder.util.ChildEntitySavingUtil;
 
 public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> extends BaseService<T, D> {
 
@@ -39,6 +40,7 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         }
 
         T updatedEntity = beforeUpdate(entity);
+        updatedEntity = ChildEntitySavingUtil.saveAnyChildren(updatedEntity, getRegistryWrapper());
         updatedEntity = getRepository().save(updatedEntity);
         updatedEntity = afterUpdate(updatedEntity);
         return updatedEntity;
