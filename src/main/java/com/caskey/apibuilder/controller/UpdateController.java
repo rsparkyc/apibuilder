@@ -22,7 +22,7 @@ public interface UpdateController<T extends BaseEntity, D extends BaseEntityDTO>
     @ResponseBody default HttpEntity<D> update(
             @PathVariable final Long id,
             @RequestBody final D entityDTO,
-            @RequestParam final Integer depth) {
+            @RequestParam(required = false) Integer depth) {
         UpdateService<T, D> updateService =
                 getRegistryWrapper().getUpdateServiceRegistry().getService(getEntityType());
         try {
