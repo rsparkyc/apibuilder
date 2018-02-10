@@ -2,12 +2,11 @@ package com.caskey.apibuilder.service;
 
 import java.lang.reflect.Type;
 
-import org.springframework.data.repository.CrudRepository;
-
 import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingRepositoryException;
+import com.caskey.apibuilder.repository.BaseEntityRepository;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.util.ReflectionUtil;
 
@@ -19,8 +18,8 @@ public interface BaseService<T extends BaseEntity, D extends BaseEntityDTO> {
         return getRegistryWrapper().getAdapterRegistry().getAdapter(getEntityType());
     }
 
-    default CrudRepository<T, Long> getRepository() {
-        CrudRepository<T, Long> repository =
+    default BaseEntityRepository<T> getRepository() {
+        BaseEntityRepository<T> repository =
                 getRegistryWrapper().getRepositoryRegistry().getRepository(getEntityType());
 
         if (repository == null) {

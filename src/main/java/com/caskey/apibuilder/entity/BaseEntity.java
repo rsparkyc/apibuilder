@@ -33,6 +33,9 @@ public class BaseEntity {
     @Column
     private Date modifiedDate;
 
+    @Column
+    private boolean archived;
+
     public Long getId() {
         return id;
     }
@@ -55,6 +58,14 @@ public class BaseEntity {
 
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(final boolean archived) {
+        this.archived = archived;
     }
 
     @PrePersist
@@ -80,15 +91,17 @@ public class BaseEntity {
 
         return Objects.equals(getId(), baseEntity.getId()) &&
                 Objects.equals(getCreatedDate(), baseEntity.getCreatedDate()) &&
-                Objects.equals(getModifiedDate(), baseEntity.getModifiedDate());
+                Objects.equals(getModifiedDate(), baseEntity.getModifiedDate()) &&
+                Objects.equals(isArchived(), baseEntity.isArchived());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEntityType(), getId(), getCreatedDate(), getModifiedDate());
+        return Objects.hash(getEntityType(), getId(), getCreatedDate(), getModifiedDate(), isArchived());
     }
 
     public String getEntityType() {
         return this.getClass().getSimpleName();
     }
+
 }

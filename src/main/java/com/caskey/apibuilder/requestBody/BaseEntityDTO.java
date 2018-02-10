@@ -2,13 +2,12 @@ package com.caskey.apibuilder.requestBody;
 
 import java.util.Date;
 
-// In this case, we have no nested relationships, so a BaseEntityDTO and a BaseEntity can really be
-// the same thing
 public abstract class BaseEntityDTO {
     private Long id;
     private Date createdDate;
     private Date modifiedDate;
     private String entityType;
+    private boolean archived;
 
     public Long getId() {
         return id;
@@ -40,5 +39,13 @@ public abstract class BaseEntityDTO {
 
     public void setEntityType(final String entityType) {
         this.entityType = entityType;
+    }
+
+    public boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(final boolean archived) {
+        this.archived = archived;
     }
 }
