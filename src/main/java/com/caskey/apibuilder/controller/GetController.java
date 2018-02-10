@@ -15,7 +15,7 @@ import com.caskey.apibuilder.service.GetService;
 
 public interface GetController<T extends BaseEntity, D extends BaseEntityDTO> extends BaseController<T, D> {
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
     @ResponseBody
     default HttpEntity<D> get(@PathVariable final Long id, @RequestParam(required = false) Integer depth) {
         GetService<T, D> getService =

@@ -18,7 +18,7 @@ import com.caskey.apibuilder.service.UpdateService;
 public interface UpdateController<T extends BaseEntity, D extends BaseEntityDTO>
         extends BaseController<T, D> {
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id:\\d+}", method = RequestMethod.PUT)
     @ResponseBody default HttpEntity<D> update(
             @PathVariable final Long id,
             @RequestBody final D entityDTO,
