@@ -232,18 +232,17 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     protected boolean hasPermission(final BaseEntity baseEntity) {
-        try {
-            return transactionalityService.withTransaction(() -> {
-
+        return transactionalityService.withTransaction(() -> {
+            try {
                 BaseEntity one = getRegistryWrapper().getRepositoryRegistry()
                         .getRepository(baseEntity.getClass())
                         .getOne(baseEntity.getId());
                 return one != null && one.getId().equals(baseEntity.getId());
-            });
-        } catch (Exception ex) {
-            // swallow, and return false
-            return false;
-        }
+            } catch (Exception ex) {
+                // swallow, and return false
+                return false;
+            }
+        });
     }
 
     public final List<D> toDTOs(final Iterable<T> entities) {
