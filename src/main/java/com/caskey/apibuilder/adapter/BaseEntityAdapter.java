@@ -3,10 +3,10 @@ package com.caskey.apibuilder.adapter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,11 +80,14 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     public final D toDTO(final T entity) {
-        return toDTO(entity, 0);
+        return toDTO(entity, 0, false);
     }
 
-    public final D toDTO(final T entity, final Integer depth) {
+    public final D toDTO(final T entity, final Integer depth, final boolean includeArchived) {
         if (entity == null || !hasPermission(entity)) {
+            return null;
+        }
+        if (!includeArchived && entity.isArchived()) {
             return null;
         }
         D dto = createNewDTO();
@@ -169,9 +172,10 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                                 // TODO: can we find a way to do generics here?
                                 List fromList = (List) fromValue;
 
-                                Object collect = fromList.stream().map(item ->
-                                        createAndMapObject(getNextDepth(depth), item)
-                                ).collect(Collectors.toList());
+                                Object collect = fromList.stream()
+                                        .map(item -> createAndMapObject(getNextDepth(depth), item))
+                                        .filter(item -> item != null)
+                                        .collect(Collectors.toList());
                                 setterMethod.invoke(to, collect);
                             }
                         }
@@ -224,7 +228,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                 registryWrapper.getAdapterRegistry().getAdapter(item.getClass());
         if (item instanceof BaseEntity) {
             BaseEntity baseEntity = (BaseEntity) item;
-            return adapter.toDTO(baseEntity, nextDepth);
+            return adapter.toDTO(baseEntity, nextDepth, false);
         } else if (item instanceof BaseEntityDTO) {
             return adapter.toEntity((BaseEntityDTO) item);
         }
@@ -246,13 +250,17 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     public final List<D> toDTOs(final Iterable<T> entities) {
-        return toDTOs(entities, 0);
+        return toDTOs(entities, 0, false);
     }
 
-    public final List<D> toDTOs(final Iterable<T> entities, final Integer depth) {
-        List<D> result = new ArrayList<>();
-        entities.forEach(e -> result.add(toDTO(e, depth)));
-        return result;
+    public final List<D> toDTOs(
+            final Iterable<T> entities,
+            final Integer depth,
+            final boolean includeArchived) {
+        return StreamSupport.stream(entities.spliterator(), false)
+                .map(e -> toDTO(e, depth, includeArchived))
+                .filter(e -> e != null)
+                .collect(Collectors.toList());
     }
 
     private int getNextDepth(final Integer depth) {

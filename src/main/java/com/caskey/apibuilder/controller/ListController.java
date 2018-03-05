@@ -1,5 +1,8 @@
 package com.caskey.apibuilder.controller;
 
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +23,12 @@ public interface ListController<T extends BaseEntity, D extends BaseEntityDTO> e
             @RequestParam(required = false) boolean includeArchived) {
         ListService<T, D> listService =
                 getRegistryWrapper().getListServiceRegistry().getService(getEntityType());
-        return new ResponseEntity<>(listService.listAllDTOs(depth, includeArchived), HttpStatus.OK);
+
+        Iterable<D> result =
+                StreamSupport.stream(listService.listAllDTOs(depth, includeArchived).spliterator(), false)
+                        .filter(item -> item != null).collect(Collectors.toList());
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
 
     }
 }

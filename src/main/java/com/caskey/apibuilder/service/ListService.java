@@ -21,6 +21,6 @@ public interface ListService<T extends BaseEntity, D extends BaseEntityDTO> exte
     }
 
     default Iterable<D> listAllDTOs(final Integer depth, final boolean includeArchived) {
-        return getAdapter().toDTOs(listAll(includeArchived), depth);
+        return getAdapter().toDTOs(listAll(includeArchived), depth, includeArchived);
     }
 }

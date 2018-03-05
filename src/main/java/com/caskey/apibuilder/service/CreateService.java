@@ -27,7 +27,7 @@ public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> ex
     }
 
     default D createAndGetDTO(final D entityDTO, final Integer depth) {
-        return getAdapter().toDTO(create(entityDTO), depth);
+        return getAdapter().toDTO(create(entityDTO), depth, false);
     }
 
     default T afterCreate(final T createdEntity) {

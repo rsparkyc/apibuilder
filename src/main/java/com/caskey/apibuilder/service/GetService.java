@@ -9,6 +9,6 @@ public interface GetService<T extends BaseEntity, D extends BaseEntityDTO> exten
     }
 
     default D getDTOById(final Long id, final Integer depth) {
-        return getAdapter().toDTO(getById(id), depth);
+        return getAdapter().toDTO(getById(id), depth, false);
     }
 }

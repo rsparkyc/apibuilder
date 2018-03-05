@@ -31,7 +31,7 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
     default D updateAndGetDTO(final Long id, final D entityDTO, final Integer depth)
             throws MissingEntityException {
         T entity = update(id, entityDTO);
-        return getAdapter().toDTO(entity, depth);
+        return getAdapter().toDTO(entity, depth, false);
     }
 
     default T update(final T entity) throws MissingEntityException {
