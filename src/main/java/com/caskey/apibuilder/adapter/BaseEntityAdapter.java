@@ -11,6 +11,7 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ClassUtils;
 
 import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.entity.BaseEntity;
@@ -41,8 +42,16 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         return registryWrapper;
     }
 
+    protected T createNewEntity(final String entityHint) {
+        return createNewEntity();
+    }
+
     protected T createNewEntity() {
         return ReflectionUtil.getTypeArgumentInstance(this.getClass(), 0);
+    }
+
+    protected D createNewDTO(final String entityHint) {
+        return createNewDTO();
     }
 
     protected D createNewDTO() {
@@ -53,7 +62,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         if (entityDTO == null) {
             return null;
         }
-        T entity = createNewEntity();
+        T entity = createNewEntity(entityDTO.getEntityType());
         doReflectiveFieldMapping(entityDTO, entity, Integer.MAX_VALUE);
         entity = doAdditionalMapping(entityDTO, entity);
         return entity;
@@ -90,7 +99,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         if (!includeArchived && entity.isArchived()) {
             return null;
         }
-        D dto = createNewDTO();
+        D dto = createNewDTO(entity.getEntityType());
 
         doReflectiveFieldMapping(entity, dto, depth);
         dto = doAdditionalMapping(entity, dto);
@@ -163,7 +172,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                     Object fromValue = getterMethod.invoke(from);
                     if (fromValue != null) {
                         Class<?> nonGenericSetterType = setterMethod.getParameters()[0].getType();
-                        if (nonGenericSetterType.isAssignableFrom(fromValue.getClass())) {
+                        if (ClassUtils.isAssignable(nonGenericSetterType, fromValue.getClass())) {
                             // At this point we're dealing with a valid method mapping
 
                             // Let's see if we're dealing with a list here
@@ -197,8 +206,9 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                     try {
                         Object fromValue = getterMethod.invoke(from);
                         if (fromValue != null) {
-                            if (setterMethod.getParameters()[0].getType()
-                                    .isAssignableFrom(fromValue.getClass())) {
+                            if (ClassUtils.isAssignable(
+                                    setterMethod.getParameters()[0].getType(),
+                                    fromValue.getClass())) {
                                 setterMethod.invoke(to, fromValue);
                             } else {
                                 Object result = createAndMapObject(getNextDepth(depth), fromValue);

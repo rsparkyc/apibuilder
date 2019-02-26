@@ -2,6 +2,8 @@ package com.caskey.apibuilder.service;
 
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -13,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class TransactionalityServiceImpl implements TransactionalityService {
 
+    private final static Logger logger = LoggerFactory.getLogger(TransactionalityServiceImpl.class);
+
     /**
      * The transaction wrapper function.
      *
@@ -22,7 +26,10 @@ public class TransactionalityServiceImpl implements TransactionalityService {
     @Override
     @Transactional
     public <T> T withTransaction(final Supplier<T> supplier) {
-        return supplier.get();
+        logger.info("Entering transaction");
+        T t = supplier.get();
+        logger.info("Exiting transaction");
+        return t;
     }
 
     /**
@@ -33,7 +40,9 @@ public class TransactionalityServiceImpl implements TransactionalityService {
     @Override
     @Transactional
     public void withTransaction(final Runnable runnable) {
+        logger.info("Entering transaction");
         runnable.run();
+        logger.info("Exiting transaction");
     }
 }
 

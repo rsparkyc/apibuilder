@@ -61,6 +61,8 @@ public class RepositoryRegistry {
     }
 
     public <T extends BaseEntity> T save(final T entity) {
+        BaseEntityRepository<BaseEntity> repository = getRepository(entity.getClass());
+        T save = repository.save(entity);
         return getRepository(entity.getClass()).save(entity);
     }
 
