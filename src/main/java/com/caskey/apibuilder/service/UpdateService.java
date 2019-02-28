@@ -21,6 +21,7 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         entityDTO.setId(id);
 
         getAdapter().doReflectiveFieldMapping(entityDTO, entity, Integer.MAX_VALUE);
+        entity = getAdapter().doAdditionalMapping(entityDTO, entity);
 
         // just to make sure we didn't try to modify that with the DTO
         entity.setCreatedDate(originalCreatedDate);
