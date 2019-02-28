@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -16,12 +17,11 @@ import org.springframework.util.ClassUtils;
 import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingAdapterException;
-import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.TransactionalityService;
 import com.caskey.apibuilder.util.ReflectionUtil;
 import com.caskey.apibuilder.util.collector.CustomCollectors;
 
-public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEntityDTO> {
+public abstract class BaseEntityAdapter<T extends BaseEntity> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseEntityAdapter.class);
 
@@ -50,19 +50,19 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         return ReflectionUtil.getTypeArgumentInstance(this.getClass(), 0);
     }
 
-    protected D createNewDTO(final String entityHint) {
+    protected Map<String, Object> createNewDTO(final String entityHint) {
         return createNewDTO();
     }
 
-    protected D createNewDTO() {
+    protected Map<String, Object> createNewDTO() {
         return ReflectionUtil.getTypeArgumentInstance(this.getClass(), 1);
     }
 
-    public final T toEntity(final D entityDTO) {
+    public final T toEntity(final Map<String, Object> entityDTO) {
         if (entityDTO == null) {
             return null;
         }
-        T entity = createNewEntity(entityDTO.getEntityType());
+        T entity = createNewEntity(entityDTO.get("entityHint").toString());
         doReflectiveFieldMapping(entityDTO, entity, Integer.MAX_VALUE);
         entity = doAdditionalMapping(entityDTO, entity);
         return entity;
@@ -74,7 +74,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
      * @param fromDto  the dto to map from
      * @param toEntity the entity to map to
      */
-    public T doAdditionalMapping(final D fromDto, final T toEntity) {
+    public T doAdditionalMapping(final Map<String, Object> fromDto, final T toEntity) {
         return toEntity;
     }
 
@@ -84,22 +84,25 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
      * @param fromEntity the entity to map from
      * @param toDto      the dto to map to
      */
-    public D doAdditionalMapping(final T fromEntity, final D toDto) {
+    public Map<String, Object> doAdditionalMapping(final T fromEntity, final Map<String, Object> toDto) {
         return toDto;
     }
 
-    public final D toDTO(final T entity) {
+    public final Map<String, Object> toDTO(final T entity) {
         return toDTO(entity, 0, false);
     }
 
-    public final D toDTO(final T entity, final Integer depth, final boolean includeArchived) {
+    public final Map<String, Object> toDTO(
+            final T entity,
+            final Integer depth,
+            final boolean includeArchived) {
         if (entity == null || !hasPermission(entity)) {
             return null;
         }
         if (!includeArchived && entity.isArchived()) {
             return null;
         }
-        D dto = createNewDTO(entity.getEntityType());
+        Map<String, Object> dto = createNewDTO(entity.getEntityType());
 
         doReflectiveFieldMapping(entity, dto, depth);
         dto = doAdditionalMapping(entity, dto);
@@ -239,8 +242,8 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         if (item instanceof BaseEntity) {
             BaseEntity baseEntity = (BaseEntity) item;
             return adapter.toDTO(baseEntity, nextDepth, false);
-        } else if (item instanceof BaseEntityDTO) {
-            return adapter.toEntity((BaseEntityDTO) item);
+        } else if (item instanceof Map) {
+            return adapter.toEntity((Map<String, Object>) item);
         }
         return null;
     }
@@ -259,11 +262,11 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
         });
     }
 
-    public final List<D> toDTOs(final Iterable<T> entities) {
+    public final List<Map<String, Object>> toDTOs(final Iterable<T> entities) {
         return toDTOs(entities, 0, false);
     }
 
-    public final List<D> toDTOs(
+    public final List<Map<String, Object>> toDTOs(
             final Iterable<T> entities,
             final Integer depth,
             final boolean includeArchived) {
