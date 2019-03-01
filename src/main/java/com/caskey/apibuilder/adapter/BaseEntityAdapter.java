@@ -199,6 +199,11 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                 // based match.  This will require looping through all the declared methods and finding
                 // the right one by name.
 
+                logger.trace(
+                        "Could not find method \"" + setterMethodName + "\" in \"" + toClass.getSimpleName()
+                                + "\" with expected return type, seeing if any method exists with "
+                                + "assignable return type");
+
                 Method setterMethod = Arrays.stream(toClass.getMethods())
                         .filter(method -> method.getName().equals(setterMethodName))
                         .collect(CustomCollectors.singletonOrNullCollector());
@@ -209,8 +214,11 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                             if (ClassUtils.isAssignable(
                                     setterMethod.getParameters()[0].getType(),
                                     fromValue.getClass())) {
+                                logger.trace("Found acceptable method for " + setterMethodName);
                                 setterMethod.invoke(to, fromValue);
                             } else {
+                                logger.trace(
+                                        "Attempting to use adapter to map object for " + setterMethodName);
                                 Object result = createAndMapObject(getNextDepth(depth), fromValue);
                                 setterMethod.invoke(to, result);
                             }
@@ -221,9 +229,6 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                     }
                 }
             }
-            logger.trace(
-                    "Could not find method \"" + setterMethodName + "\" in \"" + toClass.getSimpleName()
-                            + "\"");
 
         } catch (InvocationTargetException | IllegalAccessException e) {
             logger.warn(

@@ -17,4 +17,5 @@ public class CRUDService<T extends BaseEntity, D extends BaseEntityDTO> implemen
     public RegistryWrapper<T, D> getRegistryWrapper() {
         return registryWrapper;
     }
+
 }

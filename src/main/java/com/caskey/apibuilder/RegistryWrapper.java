@@ -1,9 +1,12 @@
 package com.caskey.apibuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
 import com.caskey.apibuilder.entity.BaseEntity;
+import com.caskey.apibuilder.exception.MissingEntityException;
 import com.caskey.apibuilder.repository.registry.RepositoryRegistry;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
@@ -12,6 +15,8 @@ import com.caskey.apibuilder.service.registry.ListServiceRegistry;
 import com.caskey.apibuilder.service.registry.UpdateServiceRegistry;
 
 public class RegistryWrapper<T extends BaseEntity, D extends BaseEntityDTO> {
+    private final static Logger logger = LoggerFactory.getLogger(RegistryWrapper.class);
+
     private AdapterRegistry adapterRegistry;
     private RepositoryRegistry repositoryRegistry;
     private CreateServiceRegistry<T, D> createServiceRegistry;
@@ -71,5 +76,16 @@ public class RegistryWrapper<T extends BaseEntity, D extends BaseEntityDTO> {
 
     public UpdateServiceRegistry<T, D> getUpdateServiceRegistry() {
         return updateServiceRegistry;
+    }
+
+    public T saveEntity(final T entity) {
+        if (entity.getId() != null) {
+            try {
+                return updateServiceRegistry.getService(entity.getClass()).update(entity);
+            } catch (MissingEntityException ex) {
+                logger.error("Expected to be able to update entity with id " + entity.getId(), ex);
+            }
+        }
+        return createServiceRegistry.getService(entity.getClass()).create(entity);
     }
 }
