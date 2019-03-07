@@ -9,6 +9,8 @@ import com.caskey.apibuilder.entity.BaseEntity;
 import com.caskey.apibuilder.exception.MissingEntityException;
 import com.caskey.apibuilder.repository.registry.RepositoryRegistry;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
+import com.caskey.apibuilder.service.CreateService;
+import com.caskey.apibuilder.service.UpdateService;
 import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
 import com.caskey.apibuilder.service.registry.GetServiceRegistry;
 import com.caskey.apibuilder.service.registry.ListServiceRegistry;
@@ -78,14 +80,16 @@ public class RegistryWrapper<T extends BaseEntity, D extends BaseEntityDTO> {
         return updateServiceRegistry;
     }
 
-    public T saveEntity(final T entity) {
+    @SuppressWarnings("unchecked")
+    public <E extends BaseEntity> E saveEntity(final E entity) {
         if (entity.getId() != null) {
             try {
-                return updateServiceRegistry.getService(entity.getClass()).update(entity);
+                return (E) ((UpdateService) updateServiceRegistry.getService(entity.getClass()))
+                        .update(entity);
             } catch (MissingEntityException ex) {
                 logger.error("Expected to be able to update entity with id " + entity.getId(), ex);
             }
         }
-        return createServiceRegistry.getService(entity.getClass()).create(entity);
+        return (E) ((CreateService) createServiceRegistry.getService(entity.getClass())).create(entity);
     }
 }

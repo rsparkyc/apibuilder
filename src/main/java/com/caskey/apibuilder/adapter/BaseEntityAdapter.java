@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,8 +115,8 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
      * @param to
      */
     public final void doReflectiveFieldMapping(final Object from, final Object to, final Integer depth) {
-        Class fromClass = from.getClass();
-        Class toClass = to.getClass();
+        Class fromClass = Hibernate.getClass(from);
+        Class toClass = Hibernate.getClass(to);
         doReflectiveFieldMapping(fromClass, from, toClass, to, depth);
     }
 
@@ -213,7 +214,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
                         if (fromValue != null) {
                             if (ClassUtils.isAssignable(
                                     setterMethod.getParameters()[0].getType(),
-                                    fromValue.getClass())) {
+                                    Hibernate.getClass(fromValue))) {
                                 logger.trace("Found acceptable method for " + setterMethodName);
                                 setterMethod.invoke(to, fromValue);
                             } else {
@@ -240,7 +241,7 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     @SuppressWarnings("unchecked")
     private Object createAndMapObject(final Integer nextDepth, final Object item) {
         BaseEntityAdapter adapter =
-                registryWrapper.getAdapterRegistry().getAdapter(item.getClass());
+                registryWrapper.getAdapterRegistry().getAdapter(Hibernate.getClass(item));
         if (item instanceof BaseEntity) {
             BaseEntity baseEntity = (BaseEntity) item;
             return adapter.toDTO(baseEntity, nextDepth, false);
@@ -253,9 +254,11 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     protected boolean hasPermission(final BaseEntity baseEntity) {
         return transactionalityService.withTransaction(() -> {
             try {
+
                 BaseEntity one = getRegistryWrapper().getRepositoryRegistry()
-                        .getRepository(baseEntity.getClass())
+                        .getRepository((Type) Hibernate.getClass(baseEntity))
                         .getOne(baseEntity.getId());
+
                 return one != null && one.getId().equals(baseEntity.getId());
             } catch (Exception ex) {
                 // swallow, and return false

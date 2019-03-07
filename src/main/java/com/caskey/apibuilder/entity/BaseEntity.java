@@ -11,6 +11,8 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
+import org.hibernate.Hibernate;
+
 @MappedSuperclass
 public class BaseEntity {
 
@@ -101,7 +103,7 @@ public class BaseEntity {
     }
 
     public String getEntityType() {
-        return this.getClass().getSimpleName();
+        return Hibernate.getClass(this).getSimpleName();
     }
 
 }

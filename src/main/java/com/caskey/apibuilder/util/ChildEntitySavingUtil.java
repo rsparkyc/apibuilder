@@ -3,6 +3,7 @@ package com.caskey.apibuilder.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -43,7 +44,7 @@ public class ChildEntitySavingUtil {
 
                                 CreateService childEntityCreateService =
                                         (CreateService) registryWrapper.getCreateServiceRegistry()
-                                                .getService(childEntity.getClass());
+                                                .getService(Hibernate.getClass(childEntity));
 
                                 // This should update the object itself, so we shouldn't need to deal with the
                                 // return type
@@ -57,7 +58,7 @@ public class ChildEntitySavingUtil {
 
                                 UpdateService childEntityUpdateService =
                                         (UpdateService) registryWrapper.getUpdateServiceRegistry()
-                                                .getService(childEntity.getClass());
+                                                .getService(Hibernate.getClass(childEntity));
 
                                 // This should update the object itself, so we shouldn't need to deal with the
                                 // return type
@@ -66,11 +67,13 @@ public class ChildEntitySavingUtil {
                                 try {
                                     childEntityUpdateService.update(childEntity);
                                 } catch (AccessDeniedException ex) {
-                                    logger.info(
+                                    // This might actually be expected as we work down the object chain.
+                                    // We might be referencing something we don't have permission to save
+                                    logger.debug(
                                             "The current user did not have the necessary permissions to "
                                                     + "update the object for this method: "
-                                                    + method.getName(),
-                                            ex);
+                                                    + method.getName());
+                                    logger.trace("Logging exception at trace level", ex);
                                 }
                             }
                         }

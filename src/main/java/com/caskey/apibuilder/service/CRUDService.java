@@ -18,4 +18,8 @@ public class CRUDService<T extends BaseEntity, D extends BaseEntityDTO> implemen
         return registryWrapper;
     }
 
+    public T saveEntity(final T entity) {
+        return getRegistryWrapper().saveEntity(entity);
+    }
+
 }

@@ -2,6 +2,8 @@ package com.caskey.apibuilder.service;
 
 import java.lang.reflect.Type;
 
+import org.hibernate.Hibernate;
+
 import com.caskey.apibuilder.RegistryWrapper;
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.entity.BaseEntity;
@@ -31,7 +33,7 @@ public interface BaseService<T extends BaseEntity, D extends BaseEntityDTO> {
     }
 
     default Type getEntityType() {
-        return ReflectionUtil.getEntityTypeFromClass(getClass());
+        return ReflectionUtil.getEntityTypeFromClass(Hibernate.getClass(this));
     }
 
 }
