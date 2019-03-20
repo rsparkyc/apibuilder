@@ -13,6 +13,8 @@ import javax.persistence.PreUpdate;
 
 import org.hibernate.Hibernate;
 
+import com.caskey.apibuilder.exception.ValidationException;
+
 @MappedSuperclass
 public class BaseEntity {
 
@@ -71,12 +73,12 @@ public class BaseEntity {
     }
 
     @PrePersist
-    protected void onCreate() throws Exception {
+    protected void onCreate() throws ValidationException {
         this.createdDate = this.modifiedDate = new Date();
     }
 
     @PreUpdate
-    protected void onUpdate() throws Exception {
+    protected void onUpdate() throws ValidationException {
         this.modifiedDate = new Date();
     }
 
