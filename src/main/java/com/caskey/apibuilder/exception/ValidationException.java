@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ValidationException extends Exception {
-    private final Map<String, String> failures;
+    private final Map<String, String> failures = new HashMap<>();
 
-    public ValidationException() {
-        failures = new HashMap<>();
+    public ValidationException(final String field, final String reason) {
+        super("There was a problem validating the field " + field + ": " + reason);
+        withFailure(field, reason);
     }
 
     public ValidationException withFailure(final String field, final String reason) {
