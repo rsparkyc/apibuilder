@@ -30,7 +30,7 @@ public abstract class ErrorHandlingController {
     private HttpEntity<StandardResponse> handleValidationException(final ValidationException ex) {
 
         StandardResponse unsuccessful =
-                StandardResponse.unsuccessful("There was a validating the given input");
+                StandardResponse.unsuccessful("There was an error validating the given input.");
 
         ex.getFailures().forEach((field, reason) ->
                 unsuccessful.addError("There was a problem with the field \"" + field + "\": " + reason));
