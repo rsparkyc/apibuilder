@@ -54,6 +54,7 @@ public class StandardResponse {
         StandardResponse response = new StandardResponse();
         response.setSuccessful(false);
         response.setMessage(message);
+        response.addError(message);
         return response;
     }
 
