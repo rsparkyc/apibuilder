@@ -5,7 +5,7 @@ import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 
 public interface GetService<T extends BaseEntity, D extends BaseEntityDTO> extends BaseService<T, D> {
     default T getById(final Long id) {
-        return getRepository().findOne(id);
+        return getRepository().getOne(id);
     }
 
     default D getDTOById(final Long id, final Integer depth) {

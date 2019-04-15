@@ -64,5 +64,6 @@ public class StandardResponse {
         }
 
         errors.add(errorMessage);
+        this.message += "  " + errorMessage;
     }
 }

@@ -2,8 +2,8 @@ package com.caskey.apibuilder;
 
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.caskey.apibuilder.adapter.BaseEntityAdapter;
 import com.caskey.apibuilder.adapter.registry.AdapterRegistry;
@@ -59,26 +59,26 @@ public class AdapterTest {
         // work some magic
         SomeDTO dto = someAdapter.toDTO(someEntity, 10, false);
 
-        Assert.assertNotNull(dto);
-        Assert.assertNotNull(dto.getObjectX());
-        Assert.assertEquals(someEntity.getObjectX().getId(), dto.getObjectX().getId());
-        Assert.assertEquals(someEntity.isAwesome(), dto.isAwesome());
-        Assert.assertNotNull(dto.getChildren());
-        Assert.assertEquals(someEntity.getChildren().size(), dto.getChildren().size());
+        Assertions.assertNotNull(dto);
+        Assertions.assertNotNull(dto.getObjectX());
+        Assertions.assertEquals(someEntity.getObjectX().getId(), dto.getObjectX().getId());
+        Assertions.assertEquals(someEntity.isAwesome(), dto.isAwesome());
+        Assertions.assertNotNull(dto.getChildren());
+        Assertions.assertEquals(someEntity.getChildren().size(), dto.getChildren().size());
 
-        Assert.assertNotNull(dto.getSomeUnknownChild());
+        Assertions.assertNotNull(dto.getSomeUnknownChild());
 
-        Assert.assertNotNull(dto.getiHasA());
-        Assert.assertEquals(hasALongEntity.getSomething(), dto.getiHasA().getSomething());
+        Assertions.assertNotNull(dto.getiHasA());
+        Assertions.assertEquals(hasALongEntity.getSomething(), dto.getiHasA().getSomething());
 
-        Assert.assertNotNull(dto.getiHasSome());
-        Assert.assertEquals(1, dto.getiHasSome().size());
-        Assert.assertEquals(hasALongEntity.getSomething(), dto.getiHasSome().get(0).getSomething());
+        Assertions.assertNotNull(dto.getiHasSome());
+        Assertions.assertEquals(1, dto.getiHasSome().size());
+        Assertions.assertEquals(hasALongEntity.getSomething(), dto.getiHasSome().get(0).getSomething());
 
         //Let's try the other way
 
         SomeEntity reversedEntity = someAdapter.toEntity(dto);
-        Assert.assertNotNull(reversedEntity);
+        Assertions.assertNotNull(reversedEntity);
 
     }
 
@@ -107,8 +107,8 @@ public class AdapterTest {
         // work some magic
         HasALongDTO dto = hasALongAdapter.toDTO(hasALongEntity, 100, false);
 
-        Assert.assertNotNull(dto);
-        Assert.assertEquals(hasALongEntity.getSomething(), dto.getSomething());
+        Assertions.assertNotNull(dto);
+        Assertions.assertEquals(hasALongEntity.getSomething(), dto.getSomething());
 
     }
 
@@ -124,8 +124,8 @@ public class AdapterTest {
         // work some magic
         SomeDTO dto = someAdapter.toDTO(someEntity, 10, false);
 
-        Assert.assertNotNull(dto);
-        Assert.assertNull(dto.getObjectX());
+        Assertions.assertNotNull(dto);
+        Assertions.assertNull(dto.getObjectX());
     }
 
     @Test
@@ -146,8 +146,8 @@ public class AdapterTest {
         // work some magic
         SomeDTO dto = someAdapter.toDTO(someEntity, 10, false);
 
-        Assert.assertNotNull(dto);
-        Assert.assertNull(dto.getObjectX());
+        Assertions.assertNotNull(dto);
+        Assertions.assertNull(dto.getObjectX());
     }
 
     private BaseEntityAdapter<SomeEntity, SomeDTO> buildAdapterRegistry() {

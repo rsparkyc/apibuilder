@@ -74,6 +74,8 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
      *
      * @param fromDto  the dto to map from
      * @param toEntity the entity to map to
+     *
+     * @return the mapped entity
      */
     public T doAdditionalMapping(final D fromDto, final T toEntity) {
         return toEntity;
@@ -84,6 +86,8 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
      *
      * @param fromEntity the entity to map from
      * @param toDto      the dto to map to
+     *
+     * @return the mapped entity
      */
     public D doAdditionalMapping(final T fromEntity, final D toDto) {
         return toDto;
@@ -109,10 +113,11 @@ public abstract class BaseEntityAdapter<T extends BaseEntity, D extends BaseEnti
     }
 
     /**
-     * This method maps objects from one object to the other
+     * Maps fields to object using reflection
      *
-     * @param from
-     * @param to
+     * @param from the object to map from
+     * @param to the object to map to
+     * @param depth how deep to map child objects
      */
     public final void doReflectiveFieldMapping(final Object from, final Object to, final Integer depth) {
         Class fromClass = Hibernate.getClass(from);

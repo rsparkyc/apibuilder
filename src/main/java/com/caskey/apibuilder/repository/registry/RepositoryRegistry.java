@@ -43,9 +43,22 @@ public class RepositoryRegistry {
     }
 
     public <T extends BaseEntity> BaseEntityRepository<T> getRepository(final Type entityType) {
+        String typeString = entityType.toString();
+        Type unproxiedType = entityType;
+        if (typeString.contains("HibernateProxy")) {
+            String unproxiedClassName = typeString.split("\\$")[0].replace("class ", "");
+            try {
+                unproxiedType = Class.forName(unproxiedClassName);
+            } catch (ClassNotFoundException e) {
+                logger.error("cannot find unproxied class for " + unproxiedClassName);
+            }
+        }
+
+        final Type typeToUse = unproxiedType;
+
         Optional<Class<? extends BaseEntityRepository<?>>> first = repositoryMap.keySet().stream()
                 .filter(repoClass ->
-                        ReflectionUtil.getEntityTypeFromClass(repoClass) == entityType).findFirst();
+                        ReflectionUtil.getEntityTypeFromClass(repoClass) == typeToUse).findFirst();
         if (first.isPresent()) {
             BaseEntityRepository<T> repository = (BaseEntityRepository<T>) getRepository(first.get());
             return repository;

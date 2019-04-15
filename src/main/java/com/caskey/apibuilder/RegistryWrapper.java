@@ -1,5 +1,6 @@
 package com.caskey.apibuilder;
 
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.caskey.apibuilder.exception.MissingEntityException;
 import com.caskey.apibuilder.repository.registry.RepositoryRegistry;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.CreateService;
+import com.caskey.apibuilder.service.TransactionalityService;
 import com.caskey.apibuilder.service.UpdateService;
 import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
 import com.caskey.apibuilder.service.registry.GetServiceRegistry;
@@ -25,6 +27,13 @@ public class RegistryWrapper<T extends BaseEntity, D extends BaseEntityDTO> {
     private GetServiceRegistry<T, D> getServiceRegistry;
     private ListServiceRegistry<T, D> listServiceRegistry;
     private UpdateServiceRegistry<T, D> updateServiceRegistry;
+
+    private TransactionalityService transactionalityService;
+
+    @Autowired
+    private void setTransactionalityService(final TransactionalityService transactionalityService) {
+        this.transactionalityService = transactionalityService;
+    }
 
     @Autowired
     public void setAdapterRegistry(final AdapterRegistry adapterRegistry) {
@@ -84,12 +93,17 @@ public class RegistryWrapper<T extends BaseEntity, D extends BaseEntityDTO> {
     public <E extends BaseEntity> E saveEntity(final E entity) {
         if (entity.getId() != null) {
             try {
-                return (E) ((UpdateService) updateServiceRegistry.getService(entity.getClass()))
+                return (E) ((UpdateService) updateServiceRegistry.getService(Hibernate.getClass(entity)))
                         .update(entity);
             } catch (MissingEntityException ex) {
                 logger.error("Expected to be able to update entity with id " + entity.getId(), ex);
             }
         }
-        return (E) ((CreateService) createServiceRegistry.getService(entity.getClass())).create(entity);
+        return (E) ((CreateService)
+                createServiceRegistry.getService(Hibernate.getClass(entity))).create(entity);
+    }
+
+    public TransactionalityService getTransactionalityService() {
+        return transactionalityService;
     }
 }

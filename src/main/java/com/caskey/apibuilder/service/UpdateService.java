@@ -11,7 +11,7 @@ public interface UpdateService<T extends BaseEntity, D extends BaseEntityDTO> ex
 
     default T update(final Long id, final D entityDTO) throws MissingEntityException {
 
-        T entity = getRepository().findOne(id);
+        T entity = getRepository().getOne(id);
         if (entity == null) {
             throw new MissingEntityException();
         }
