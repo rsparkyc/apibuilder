@@ -53,7 +53,6 @@ public class StandardResponse {
         logger.warn("Returning unsuccessful response: " + message);
         StandardResponse response = new StandardResponse();
         response.setSuccessful(false);
-        response.setMessage(message);
         response.addError(message);
         return response;
     }
@@ -64,6 +63,11 @@ public class StandardResponse {
         }
 
         errors.add(errorMessage);
-        this.message += "  " + errorMessage;
+        if (message!= null && message.length() > 0 ) {
+            this.message += "  " + errorMessage;
+        }
+        else {
+            this.message = errorMessage;
+        }
     }
 }
