@@ -19,7 +19,12 @@ public interface CreateService<T extends BaseEntity, D extends BaseEntityDTO> ex
         theEntity = ChildEntitySavingUtil.saveAnyChildren(theEntity, getRegistryWrapper());
         theEntity = getRepository().save(theEntity);
         theEntity = afterCreate(theEntity);
+        afterSaveHooks(theEntity);
         return theEntity;
+    }
+
+    default void afterSaveHooks(final T theEntity) {
+        getRegistryWrapper().getHookService().runHooks(theEntity);
     }
 
     default T create(final D entityDTO) {

@@ -11,6 +11,7 @@ import com.caskey.apibuilder.exception.MissingEntityException;
 import com.caskey.apibuilder.repository.registry.RepositoryRegistry;
 import com.caskey.apibuilder.requestBody.BaseEntityDTO;
 import com.caskey.apibuilder.service.CreateService;
+import com.caskey.apibuilder.service.HookService;
 import com.caskey.apibuilder.service.TransactionalityService;
 import com.caskey.apibuilder.service.UpdateService;
 import com.caskey.apibuilder.service.registry.CreateServiceRegistry;
@@ -29,6 +30,7 @@ public class RegistryWrapper<T extends BaseEntity, D extends BaseEntityDTO> {
     private UpdateServiceRegistry<T, D> updateServiceRegistry;
 
     private TransactionalityService transactionalityService;
+    private HookService hookService;
 
     @Autowired
     private void setTransactionalityService(final TransactionalityService transactionalityService) {
@@ -105,5 +107,14 @@ public class RegistryWrapper<T extends BaseEntity, D extends BaseEntityDTO> {
 
     public TransactionalityService getTransactionalityService() {
         return transactionalityService;
+    }
+
+    public HookService getHookService() {
+        return hookService;
+    }
+
+    @Autowired
+    public void setHookService(final HookService hookService) {
+        this.hookService = hookService;
     }
 }
